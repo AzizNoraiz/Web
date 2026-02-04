@@ -1,0 +1,82 @@
+name: casino
+
+x-orbstack:
+  project: casino
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: casino_db
+    volumes:
+      - casino_db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-casino}
+      MYSQL_USER: ${MYSQL_USER:-app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-!ChangeMe!}
+    restart: always
+    ports:
+      - "3306:3306"
+    networks:
+      - casino_network
+
+  adminer:
+    image: adminer
+    container_name: casino_adminer
+    environment:
+      ADMINER_DEFAULT_DB_DRIVER: mysql
+      ADMINER_DEFAULT_DB_HOST: casino_db
+      ADMINER_DEFAULT_DB_NAME: ${MYSQL_DATABASE:-casino}
+      ADMINER_DEFAULT_SERVER: casino_db
+    restart: always
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+    networks:
+      - casino_network
+
+  php:
+    container_name: casino_php
+    build:
+      context: ./php
+      args:
+        TIMEZONE: ${TIMEZONE:-Europe/Paris}
+    volumes:
+      - ../:/var/www/casino:cached
+    networks:
+      - casino_network
+    ports:
+      - "9003:9003"
+
+  nginx:
+    image: nginx:alpine
+    container_name: casino_nginx
+    volumes:
+      - ../:/var/www/casino:cached
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8080:80"
+    networks:
+      - casino_network
+    env_file:
+      - .env.nginx
+    depends_on:
+      - php
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: casino_mailhog
+    # Indispensable pour Mac M1/M2/M3 car l'image n'existe qu'en version Intel
+    platform: linux/amd64
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - casino_network
+
+volumes:
+  casino_db_data:
+
+networks:
+  casino_network:
