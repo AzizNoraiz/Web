@@ -1,20 +1,25 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Accueil - Casino {% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/var/www/casino/src/Controller/HomeController.php</code></li>
-        <li>Your template at <code>/var/www/casino/templates/home/index.html.twig</code></li>
-    </ul>
-</div>
+    <div class="bg-casino d-flex flex-column justify-content-center align-items-center position-relative text-center">
+        <div class="position-absolute top-0 end-0 p-4 d-flex flex-column gap-2"> 
+            <a href="#" class="btn btn-outline-light rounded-pill px-4">
+                CONNEXION
+            </a>
+            <a href="#" class="btn btn-danger rounded-pill px-4 fw-bold shadow">
+                CRÉER UN COMPTE
+            </a>
+        </div>
+        <div class="container">
+            <img src="{{ asset('images/casino-logo.png') }}" alt="Logo Casino 777" class="img-fluid mb-4 d-block mx-auto" style="max-width: 250px;">
+            <h1 class="display-1 fw-bold text-uppercase mb-4" style="text-shadow: 0px 0px 20px rgba(255, 0, 0, 0.6);">
+                Casino
+            </h1>
+            <p class="text-white-50 fst-italic">
+                Rejoignez l'élite.
+            </p>
+        </div>
+    </div>
 {% endblock %}
