@@ -4,22 +4,30 @@
 
 {% block body %}
     <div class="bg-casino d-flex flex-column justify-content-center align-items-center position-relative text-center">
-        <div class="position-absolute top-0 end-0 p-4 d-flex flex-column gap-2"> 
-            <a href="#" class="btn btn-outline-light rounded-pill px-4">
-                CONNEXION
-            </a>
-            <a href="#" class="btn btn-danger rounded-pill px-4 fw-bold shadow">
-                CRÉER UN COMPTE
-            </a>
-        </div>
+
         <div class="container">
-            <img src="{{ asset('images/casino-logo.png') }}" alt="Logo Casino 777" class="img-fluid mb-4 d-block mx-auto" style="max-width: 250px;">
+            
+            <img src="{{ asset('images/logo-casino.png') }}" alt="Logo Casino" class="img-fluid mb-4 d-block mx-auto" style="max-width: 350px;">
+
             <h1 class="display-1 fw-bold text-uppercase mb-4" style="text-shadow: 0px 0px 20px rgba(255, 0, 0, 0.6);">
-                Casino
+                Casino Royale
             </h1>
-            <p class="text-white-50 fst-italic">
-                Rejoignez l'élite.
+
+            <p class="text-white-50 fst-italic mb-5">
+                Rejoignez l'élite
             </p>
+
+            <div class="d-flex justify-content-center gap-3 mt-2">
+                
+                <a href="#" class="btn btn-outline-light rounded-pill px-5 py-2 fw-semibold">
+                    CONNEXION
+                </a>
+            </div>
+             <div class="d-flex justify-content-center gap-3 mt-2">
+                <a href="#" class="btn btn-danger rounded-pill px-5 py-2 fw-bold shadow-lg">
+                    CRÉER UN COMPTE
+                </a>
+            </div>
         </div>
     </div>
 {% endblock %}
