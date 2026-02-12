@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Casino Royal | Inscription{% endblock %}
+
+{% block body %}
+<div class="bg-casino d-flex flex-column justify-content-center align-items-center min-vh-100 py-5">
+
+    <div class="container">
+        <h1 class="display-1 fw-bold text-uppercase mb-5 text-warning text-center"
+            style="text-shadow: 0px 0px 20px rgba(255, 0, 0, 0.6);">
+            Casino Royal
+        </h1>
+
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+                <div class="p-5 rounded-4 shadow-lg"
+                    style="background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 140, 0, 0.2);">
+
+                    <h2 class="h3 text-white text-center mb-5 fw-light text-uppercase" style="letter-spacing: 3px;">
+                        Rejoindre l'élite</h2>
+
+                    <form action="/inscription" method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label small text-uppercase fw-bold"
+                                    style="color: #ff8c00;">Nom</label>
+                                <input type="text"
+                                    class="form-control bg-dark text-white border-0 py-2 px-3 shadow-none"
+                                    placeholder="Nom" style="border-left: 3px solid #ff8c00 !important;">
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label small text-uppercase fw-bold"
+                                    style="color: #ff8c00;">Prénom</label>
+                                <input type="text"
+                                    class="form-control bg-dark text-white border-0 py-2 px-3 shadow-none"
+                                    placeholder="Prénom" style="border-left: 3px solid #ff8c00 !important;">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Date de
+                                naissance</label>
+                            <input type="date" class="form-control bg-dark text-white border-0 py-2 px-3 shadow-none"
+                                style="border-left: 3px solid #ff8c00 !important;">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Adresse
+                                Mail</label>
+                            <input type="email" class="form-control bg-dark text-white border-0 py-2 px-3 shadow-none"
+                                placeholder="exemple@mail.com" style="border-left: 3px solid #ff8c00 !important;">
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Numéro de
+                                téléphone</label>
+                            <input type="tel" class="form-control bg-dark text-white border-0 py-2 px-3 shadow-none"
+                                placeholder="06 00 00 00 00" style="border-left: 3px solid #ff8c00 !important;">
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit"
+                                class="btn btn-lg rounded-pill px-5 py-3 fw-bold text-white shadow-lg border-0"
+                                style="background: linear-gradient(45deg, #ff4500, #ff8c00); font-size: 1.2rem; min-width: 300px;">
+                                CRÉER MON COMPTE
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="/home" class="text-white-50 text-decoration-none">← Acceuil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
