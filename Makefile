@@ -32,13 +32,29 @@ clean:
 restart: down up
 
 # Connect to the PHP container
-start:
+shell:
 	docker exec -it $(DOCKER_PHP_CONTAINER) /bin/bash
 
 # Run composer install
 composer-install:
 	docker exec $(DOCKER_PHP_CONTAINER) composer install
 
-# Regénérer l'autoloading de Composer
+# Regenerate Composer autoloading
 dump-autoload:
 	docker exec $(DOCKER_PHP_CONTAINER) composer dump-autoload
+
+# Run Symfony console commands
+sf:
+	docker exec $(DOCKER_PHP_CONTAINER) php bin/console
+
+# Clear the Symfony cache
+cache-clear:
+	docker exec $(DOCKER_PHP_CONTAINER) php bin/console cache:clear
+
+# Run database migrations
+migrate:
+	docker exec $(DOCKER_PHP_CONTAINER) php bin/console doctrine:migrations:migrate --no-interaction
+
+# Run PHPUnit tests
+test:
+	docker exec $(DOCKER_PHP_CONTAINER) ./vendor/bin/phpunit
