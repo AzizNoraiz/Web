@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Casino Royal | Connexion{% endblock %}
+
+{% block body %}
+<div class="bg-casino d-flex flex-column justify-content-center align-items-center min-vh-100 py-5">
+
+    <div class="container">
+        <h1 class="display-1 fw-bold text-uppercase text-center mb-5 text-warning"
+            style="text-shadow: 0px 0px 20px rgba(255, 0, 0, 0.6);">
+            Casino Royal
+        </h1>
+
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="p-4 rounded-4 shadow-lg" style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3);">
+                    
+                    <h2 class="h4 text-white text-center mb-4 fw-light text-uppercase" style="letter-spacing: 2px;">Identification</h2>
+
+                    <form action="/connexion" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Nom d'utilisateur</label>
+                            <input type="text" class="form-control bg-dark text-white border-0 py-3 px-4 shadow-none" 
+                                   placeholder="Votre pseudo" 
+                                   style="border-left: 3px solid #ff8c00 !important;">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Mot de passe</label>
+                            <input type="password" class="form-control bg-dark text-white border-0 py-3 px-4 shadow-none" 
+                                   placeholder="••••••••" 
+                                   style="border-left: 3px solid #ff8c00 !important;">
+                        </div>
+
+                        <button type="submit" class="btn w-100 rounded-pill py-3 fw-bold text-white shadow-lg border-0 mb-3"
+                                style="background: linear-gradient(45deg, #ff4500, #ff8c00); font-size: 1.1rem;">
+                            ENTRER DANS LE SALON
+                        </button>
+                    </form>
+
+                    <div class="text-center">
+                        <a href="#" class="text-white-50 small text-decoration-none">Mot de passe oublié ?</a>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <p class="text-white-50">Pas encore membre ? 
+                        <a href="/inscription" class="fw-bold text-decoration-none" style="color: #ff8c00;">Créer un compte</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
