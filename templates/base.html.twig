@@ -11,8 +11,9 @@
             }
             .bg-casino {
                 background: linear-gradient(180deg, #8B0000 0%, #2b0303 60%, #000000 100%);
-                min-height: 100vh;
+                flex: 1;
             }
+
         </style>
 
         {% block stylesheets %}
@@ -22,8 +23,12 @@
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-    <body>
-        {% block body %}{% endblock %}
+    <body class="d-flex flex-column min-vh-100">
+    {% block body %}{% endblock %}
+
+    <div class="mt-auto">
         {% include 'fragment/footer.html.twig' %}
-    </body>
+    </div>
+</body>
+
 </html>
