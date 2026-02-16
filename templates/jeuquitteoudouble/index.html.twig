@@ -5,6 +5,22 @@
 {% block body %}
 <div class="bg-casino d-flex flex-column justify-content-center align-items-center min-vh-100 py-5">
 
+
+    <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3">
+        <div class="text-end">
+            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 1px;">
+                {{ app.user.username|default('Joueur') }}
+            </div>
+            <div class="text-warning fw-bold fs-4">
+                5 000 <small class="text-white-50" style="font-size: 0.6em;">jetons</small>
+            </div>
+        </div>
+        <a href="/depotretrait" class="btn rounded-circle d-flex align-items-center justify-content-center shadow-lg"
+            style="background: linear-gradient(45deg, #ff4500, #ff8c00); width: 45px; height: 45px; border: none; color: white; text-decoration: none;">
+            <i class="fs-4 fw-bold">+</i>
+        </a>
+    </div>
+    
     <div class="container text-center">
         <div class="d-flex justify-content-center align-items-center mb-5">
             <h1 class="display-1 fw-bold text-uppercase mb-0 text-warning"
