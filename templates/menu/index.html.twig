@@ -5,6 +5,22 @@
 {% block body %}
 <div class="bg-casino d-flex flex-column justify-content-center align-items-center min-vh-100 py-5">
 
+
+    <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3">
+        <div class="text-end">
+            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 1px;">
+                {{ app.user.username|default('Joueur') }}
+            </div>
+            <div class="text-warning fw-bold fs-4">
+                5 000 <small class="text-white-50" style="font-size: 0.6em;">jetons</small>
+            </div>
+        </div>
+        <a href="/depotretrait" class="btn rounded-circle d-flex align-items-center justify-content-center shadow-lg"
+            style="background: linear-gradient(45deg, #ff4500, #ff8c00); width: 45px; height: 45px; border: none; color: white; text-decoration: none;">
+            <i class="fs-4 fw-bold">+</i>
+        </a>
+    </div>
+    
     <div class="container">
         <h1 class="display-1 fw-bold text-uppercase text-center mb-5 text-warning"
             style="text-shadow: 0px 0px 20px rgba(255, 0, 0, 0.6);">
@@ -12,42 +28,42 @@
         </h1>
 
         <div class="row justify-content-center g-4">
-            
+
             <div class="col-12 col-md-4">
-                <div class="p-4 rounded-4 shadow-lg text-center h-100" 
-                     style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3); border-top: 4px solid #ff8c00 !important;">
+                <div class="p-4 rounded-4 shadow-lg text-center h-100"
+                    style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3); border-top: 4px solid #ff8c00 !important;">
                     <h2 class="display-4 fw-bold text-warning mb-3">777</h2>
                     <h3 class="h5 text-white text-uppercase mb-4" style="letter-spacing: 2px;">Le 777</h3>
                     <p class="text-white-50 mb-4">La machine à sous légendaire du salon.</p>
                     <a href="/jeu777" class="btn rounded-pill fw-bold text-white w-100 py-2"
-                       style="background: linear-gradient(45deg, #ff4500, #ff8c00); border: none;">
-                       JOUER
+                        style="background: linear-gradient(45deg, #ff4500, #ff8c00); border: none;">
+                        JOUER
                     </a>
                 </div>
             </div>
 
             <div class="col-12 col-md-4">
-                <div class="p-4 rounded-4 shadow-lg text-center h-100" 
-                     style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3); border-top: 4px solid #ff4500 !important;">
+                <div class="p-4 rounded-4 shadow-lg text-center h-100"
+                    style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3); border-top: 4px solid #ff4500 !important;">
                     <h2 class="display-4 fw-bold text-danger mb-3">x2</h2>
                     <h3 class="h5 text-white text-uppercase mb-4" style="letter-spacing: 2px;">Quitte ou Double</h3>
                     <p class="text-white-50 mb-4">Tout miser pour doubler la mise.</p>
                     <a href="/jeuquitteoudouble" class="btn rounded-pill fw-bold text-white w-100 py-2"
-                       style="background: linear-gradient(45deg, #ff4500, #ff8c00); border: none;">
-                       JOUER
+                        style="background: linear-gradient(45deg, #ff4500, #ff8c00); border: none;">
+                        JOUER
                     </a>
                 </div>
             </div>
 
             <div class="col-12 col-md-4">
-                <div class="p-4 rounded-4 shadow-lg text-center h-100" 
-                     style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3); border-top: 4px solid #ffc107 !important;">
+                <div class="p-4 rounded-4 shadow-lg text-center h-100"
+                    style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3); border-top: 4px solid #ffc107 !important;">
                     <h2 class="display-4 fw-bold text-info mb-3">B</h2>
                     <h3 class="h5 text-white text-uppercase mb-4" style="letter-spacing: 2px;">Le Bingo</h3>
                     <p class="text-white-50 mb-4">Le tirage au sort royal pour gagner gros.</p>
                     <a href="/jeubingo" class="btn rounded-pill fw-bold text-white w-100 py-2"
-                       style="background: linear-gradient(45deg, #ff4500, #ff8c00); border: none;">
-                       JOUER
+                        style="background: linear-gradient(45deg, #ff4500, #ff8c00); border: none;">
+                        JOUER
                     </a>
                 </div>
             </div>
