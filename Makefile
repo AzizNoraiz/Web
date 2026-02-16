@@ -31,6 +31,7 @@ clean:
 # Restart the containers
 restart: down up
 
+
 # Connect to the PHP container
 shell:
 	docker exec -it $(DOCKER_PHP_CONTAINER) /bin/bash
