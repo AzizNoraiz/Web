@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Casino Royal | Le 777{% endblock %}
+
+{% block body %}
+<div class="bg-casino d-flex flex-column justify-content-center align-items-center min-vh-100 py-5">
+
+    <div class="container text-center">
+        <div class="d-flex justify-content-center align-items-center mb-5">
+            <h1 class="display-1 fw-bold text-uppercase mb-0 text-warning"
+                style="text-shadow: 0px 0px 20px rgba(255, 0, 0, 0.6);">
+                Le 777
+            </h1>
+            <button class="ms-4 btn btn-outline-warning rounded-circle fw-bold" 
+                    style="width: 50px; height: 50px; font-size: 1.5rem;"
+                    data-bs-toggle="modal" data-bs-target="#rulesModal">?</button>
+        </div>
+
+        <div class="row justify-content-center mb-5">
+            <div class="col-auto d-flex gap-3">
+                <div class="p-4 rounded-4 shadow-lg d-flex align-items-center justify-content-center" 
+                     style="background: rgba(0, 0, 0, 0.8); border: 2px solid #ff8c00; width: 120px; height: 180px;">
+                    <span class="display-1 fw-bold text-white">7</span>
+                </div>
+                <div class="p-4 rounded-4 shadow-lg d-flex align-items-center justify-content-center" 
+                     style="background: rgba(0, 0, 0, 0.8); border: 2px solid #ff8c00; width: 120px; height: 180px;">
+                    <span class="display-1 fw-bold text-white">7</span>
+                </div>
+                <div class="p-4 rounded-4 shadow-lg d-flex align-items-center justify-content-center" 
+                     style="background: rgba(0, 0, 0, 0.8); border: 2px solid #ff8c00; width: 120px; height: 180px;">
+                    <span class="display-1 fw-bold text-white">7</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-4 p-4 rounded-4 shadow-lg" style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3);">
+                
+                <div class="mb-4">
+                    <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Votre Mise (Jetons)</label>
+                    <input type="number" class="form-control bg-dark text-white border-0 text-center py-2 fw-bold" 
+                           value="10" min="1" style="border-bottom: 3px solid #ff8c00 !important; font-size: 1.2rem;">
+                </div>
+
+                <button class="btn w-100 rounded-pill py-3 fw-bold text-white shadow-lg border-0 mb-2"
+                        style="background: linear-gradient(45deg, #ff4500, #ff8c00); font-size: 1.3rem;">
+                    LANCER LE TIRAGE
+                </button>
+                
+                <a href="/menu" class="text-white-50 small text-decoration-none">Retour au salon</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="rulesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-warning" style="border: 2px solid #ff8c00;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-warning fw-bold text-uppercase">Règles du 777</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <p>Alignez trois chiffres identiques pour remporter la mise !</p>
+                <hr class="bg-warning">
+                <ul class="list-unstyled">
+                    <li><strong class="text-warning">7 - 7 - 7</strong> : Jackpot x50</li>
+                    <li><strong>3 chiffres identiques</strong> : Mise x10</li>
+                    <li><strong>2 chiffres identiques</strong> : Mise x2</li>
+                </ul>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-warning rounded-pill px-4 fw-bold" data-bs-dismiss="modal">COMPRIS</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
