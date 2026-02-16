@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Casino Royal | Quitte ou Double{% endblock %}
+
+{% block body %}
+<div class="bg-casino d-flex flex-column justify-content-center align-items-center min-vh-100 py-5">
+
+    <div class="container text-center">
+        <div class="d-flex justify-content-center align-items-center mb-5">
+            <h1 class="display-1 fw-bold text-uppercase mb-0 text-warning"
+                style="text-shadow: 0px 0px 20px rgba(255, 0, 0, 0.6);">
+                Quitte ou Double
+            </h1>
+            <button class="ms-4 btn btn-outline-warning rounded-circle fw-bold" 
+                    style="width: 50px; height: 50px; font-size: 1.5rem;"
+                    data-bs-toggle="modal" data-bs-target="#rulesModal">?</button>
+        </div>
+
+        <div class="row justify-content-center mb-5">
+            <div class="col-auto">
+                <div class="rounded-circle shadow-lg d-flex align-items-center justify-content-center" 
+                     style="background: rgba(0, 0, 0, 0.8); border: 4px solid #ff8c00; width: 200px; height: 200px; box-shadow: 0px 0px 30px rgba(255, 140, 0, 0.3) !important;">
+                    <span class="display-1 fw-bold text-white" id="drawNumber">?</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-6 p-4 rounded-4 shadow-lg" style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3);">
+                
+                <div class="mb-4">
+                    <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Votre Mise</label>
+                    <input type="number" class="form-control bg-dark text-white border-0 text-center py-2 fw-bold" 
+                           value="10" min="1" style="border-bottom: 3px solid #ff8c00 !important; font-size: 1.2rem;">
+                </div>
+
+                <div class="d-flex gap-2 mb-4">
+                    <button class="btn btn-outline-light flex-fill py-3 fw-bold rounded-pill shadow-sm text-uppercase">Pair</button>
+                    <button class="btn btn-outline-warning flex-fill py-3 fw-bold rounded-pill shadow-sm text-uppercase" style="border-color: #ff8c00; color: #ff8c00;">Zéro</button>
+                    <button class="btn btn-outline-light flex-fill py-3 fw-bold rounded-pill shadow-sm text-uppercase">Impair</button>
+                </div>
+
+                <button class="btn w-100 rounded-pill py-3 fw-bold text-white shadow-lg border-0 mb-3"
+                        style="background: linear-gradient(45deg, #ff4500, #ff8c00); font-size: 1.3rem;">
+                    TENTER LE DESTIN
+                </button>
+                
+                <a href="/menu" class="text-white-50 small text-decoration-none">Retour au salon</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="rulesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-warning" style="border: 2px solid #ff8c00;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-warning fw-bold text-uppercase">Règles du Quitte ou Double</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <p>Misez sur le résultat du tirage aléatoire (0 à 36).</p>
+                <hr class="bg-warning">
+                <ul class="list-unstyled text-start px-4">
+                    <li><strong class="text-white">PAIR / IMPAIR</strong> : Mise doublée (x2)</li>
+                    <li><strong class="text-warning">ZÉRO</strong> : Jackpot royal (x35)</li>
+                    <li><small class="text-white-50">Note : Le Zéro n'est ni pair ni impair.</small></li>
+                </ul>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-warning rounded-pill px-4 fw-bold" data-bs-dismiss="modal">À MOI DE JOUER</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

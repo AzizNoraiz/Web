@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Casino Royal | Bingo{% endblock %}
+
+{% block body %}
+<div class="bg-casino d-flex flex-column justify-content-center align-items-center min-vh-100 py-5">
+
+    <div class="container text-center">
+        <div class="d-flex justify-content-center align-items-center mb-5">
+            <h1 class="display-1 fw-bold text-uppercase mb-0 text-warning"
+                style="text-shadow: 0px 0px 20px rgba(255, 0, 0, 0.6);">
+                Bingo Royal
+            </h1>
+            <button class="ms-4 btn btn-outline-warning rounded-circle fw-bold" 
+                    style="width: 50px; height: 50px; font-size: 1.5rem;"
+                    data-bs-toggle="modal" data-bs-target="#rulesModal">?</button>
+        </div>
+
+        <div class="mb-5">
+            <p class="text-white-50 text-uppercase small mb-3" style="letter-spacing: 3px;">Numéros Tirés</p>
+            <div class="d-flex justify-content-center gap-3">
+                {% for i in 1..5 %}
+                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-lg" 
+                     style="background: rgba(255, 255, 255, 0.1); border: 2px dashed #ff8c00; width: 70px; height: 70px; font-size: 1.5rem; color: #ff8c00;">
+                    ?
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8 p-4 rounded-4 shadow-lg" style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3);">
+                
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Votre Mise</label>
+                        <input type="number" class="form-control bg-dark text-white border-0 text-center py-2 fw-bold mb-3" 
+                               value="10" min="1" style="border-bottom: 3px solid #ff8c00 !important; font-size: 1.2rem;">
+                        <p class="text-white-50 small">Choisissez 3 numéros</p>
+                    </div>
+
+                    <div class="col-md-8 mb-4">
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                            {% for n in 1..10 %}
+                            <button class="btn btn-outline-light rounded-3 fw-bold shadow-none" 
+                                    style="width: 55px; height: 55px; transition: 0.2s;">
+                                {{ n }}
+                            </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn w-100 rounded-pill py-3 fw-bold text-white shadow-lg border-0 mb-3"
+                        style="background: linear-gradient(45deg, #ff4500, #ff8c00); font-size: 1.3rem;">
+                    LANCER LE TIRAGE
+                </button>
+                
+                <a href="/menu" class="text-white-50 small text-decoration-none">Retour au salon</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="rulesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-warning" style="border: 2px solid #ff8c00;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-warning fw-bold text-uppercase">Règles du Bingo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <p>Sélectionnez 3 numéros secrets parmi les 10 proposés.</p>
+                <hr class="bg-warning">
+                <ul class="list-unstyled text-start px-4">
+                    <li><strong class="text-warning">3 numéros trouvés</strong> : Jackpot x20</li>
+                    <li><strong class="text-white">2 numéros trouvés</strong> : Gain x5</li>
+                    <li><strong class="text-white-50">1 numéro trouvé</strong> : Mise remboursée</li>
+                </ul>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-warning rounded-pill px-4 fw-bold" data-bs-dismiss="modal">C'EST PARTI</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
