@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %} Casino {% endblock %}</title>
-        
+
         <style>
             body {
                 background-color: #000;
@@ -24,5 +24,6 @@
     </head>
     <body>
         {% block body %}{% endblock %}
+        {% include 'fragments/footer.html.twig' %}
     </body>
 </html>
