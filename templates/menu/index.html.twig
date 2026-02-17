@@ -5,63 +5,66 @@
 {% block body %}
 <div class="bg-casino min-vh-100 py-5 position-relative d-flex align-items-center" style="background: radial-gradient(circle, #1a1a1a 0%, #000000 100%); overflow: hidden;">
 
-    <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3" style="z-index: 1000;">
+
+    <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3">
         <div class="text-end">
-            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">{{ app.user.username|default('Membre Gold') }}</div>
-            <div class="text-warning fw-bold fs-3" style="text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);">
-                5 000 <small class="text-white-50" style="font-size: 0.5em;">JETONS</small>
+            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 1px;">
+                {{ app.user.username|default('Joueur') }}
+            </div>
+            <div class="text-warning fw-bold fs-4">
+                5 000 <small class="text-white-50" style="font-size: 0.6em;">jetons</small>
             </div>
         </div>
-        <a href="/depotretrait" class="btn-add-funds shadow-lg">
-            <span>+</span>
+        <a href="/depotretrait" class="btn rounded-circle d-flex align-items-center justify-content-center shadow-lg"
+            style="background: linear-gradient(45deg, #ff4500, #ff8c00); width: 45px; height: 45px; border: none; color: white; text-decoration: none;">
+            <i class="fs-4 fw-bold">+</i>
         </a>
     </div>
-
+    
     <div class="container">
-        <div class="text-center mb-5">
-            <h1 class="display-1 fw-bold text-uppercase mb-2 text-warning"
-                style="text-shadow: 0px 0px 30px rgba(255, 0, 0, 0.8); font-size: calc(2.5rem + 5vw); letter-spacing: -2px;">
-                Casino Royal
-            </h1>
-            <div class="d-flex justify-content-center align-items-center gap-3">
-                <div style="height: 1px; width: 80px; background: linear-gradient(to right, transparent, #ff8c00);"></div>
-                <p class="text-white-50 text-uppercase mb-0 fw-light" style="letter-spacing: 8px; font-size: 0.9rem;">Salon Privé</p>
-                <div style="height: 1px; width: 80px; background: linear-gradient(to left, transparent, #ff8c00);"></div>
-            </div>
-        </div>
+        <h1 class="display-1 fw-bold text-uppercase text-center mb-5 text-warning"
+            style="text-shadow: 0px 0px 20px rgba(255, 0, 0, 0.6);">
+            Casino Royal
+        </h1>
 
-        <div class="row g-5 justify-content-center mt-2">
-            
-            <div class="col-12 col-lg-4">
-                <div class="neon-card gold-glow">
-                    <div class="card-inner text-center">
-                        <div class="game-icon text-warning">777</div>
-                        <h2 class="h4 text-white fw-bold text-uppercase mb-3">Le Jackpot</h2>
-                        <p class="text-white-50 small mb-4">La machine mythique. Aligne les sept et décroche l'or.</p>
-                        <a href="/jeu777" class="btn-play gold">ENTRER</a>
-                    </div>
+        <div class="row justify-content-center g-4">
+
+            <div class="col-12 col-md-4">
+                <div class="p-4 rounded-4 shadow-lg text-center h-100"
+                    style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3); border-top: 4px solid #ff8c00 !important;">
+                    <h2 class="display-4 fw-bold text-warning mb-3">777</h2>
+                    <h3 class="h5 text-white text-uppercase mb-4" style="letter-spacing: 2px;">Le 777</h3>
+                    <p class="text-white-50 mb-4">La machine à sous légendaire du salon.</p>
+                    <a href="/jeu777" class="btn rounded-pill fw-bold text-white w-100 py-2"
+                        style="background: linear-gradient(45deg, #ff4500, #ff8c00); border: none;">
+                        JOUER
+                    </a>
                 </div>
             </div>
 
-            <div class="col-12 col-lg-4">
-                <div class="neon-card red-glow">
-                    <div class="card-inner text-center">
-                        <div class="game-icon text-danger">x2</div>
-                        <h2 class="h4 text-white fw-bold text-uppercase mb-3">Double Mise</h2>
-                        <p class="text-white-50 small mb-4">Pile ou face moderne. La chance sourit aux audacieux.</p>
-                        <a href="/jeuquitteoudouble" class="btn-play red">ENTRER</a>
-                    </div>
+            <div class="col-12 col-md-4">
+                <div class="p-4 rounded-4 shadow-lg text-center h-100"
+                    style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3); border-top: 4px solid #ff4500 !important;">
+                    <h2 class="display-4 fw-bold text-danger mb-3">x2</h2>
+                    <h3 class="h5 text-white text-uppercase mb-4" style="letter-spacing: 2px;">Quitte ou Double</h3>
+                    <p class="text-white-50 mb-4">Tout miser pour doubler la mise.</p>
+                    <a href="/jeuquitteoudouble" class="btn rounded-pill fw-bold text-white w-100 py-2"
+                        style="background: linear-gradient(45deg, #ff4500, #ff8c00); border: none;">
+                        JOUER
+                    </a>
                 </div>
             </div>
 
-            <div class="col-12 col-lg-4">
-                <div class="neon-card blue-glow">
-                    <div class="card-inner text-center">
-                        <div class="game-icon text-info">B</div>
-                        <h2 class="h4 text-white fw-bold text-uppercase mb-3">Bingo Royal</h2>
-                        <p class="text-white-50 small mb-4">Le tirage de la cour. Choisis tes chiffres, attend le destin.</p>
-                        <a href="/jeubingo" class="btn-play blue">ENTRER</a>
-                    </div>
+            <div class="col-12 col-md-4">
+                <div class="p-4 rounded-4 shadow-lg text-center h-100"
+                    style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3); border-top: 4px solid #ffc107 !important;">
+                    <h2 class="display-4 fw-bold text-info mb-3">B</h2>
+                    <h3 class="h5 text-white text-uppercase mb-4" style="letter-spacing: 2px;">Le Bingo</h3>
+                    <p class="text-white-50 mb-4">Le tirage au sort royal pour gagner gros.</p>
+                    <a href="/jeubingo" class="btn rounded-pill fw-bold text-white w-100 py-2"
+                        style="background: linear-gradient(45deg, #ff4500, #ff8c00); border: none;">
+                        JOUER
+                    </a>
                 </div>
             </div>
 
