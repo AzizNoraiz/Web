@@ -1,39 +1,107 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Casino Royal | Acceuil{% endblock %}
+{% block title %}Casino Royal | Accueil{% endblock %}
 
 {% block body %}
-<div class="bg-casino d-flex flex-column justify-content-center align-items-center position-relative text-center">
+<div class="bg-casino min-vh-100 d-flex flex-column justify-content-center align-items-center position-relative text-center overflow-hidden">
 
-    <div class="container">
+    {# --- EFFET DE LUMIÈRE D'AMBIANCE --- #}
+    <div class="ambient-glow"></div>
 
-        <img src="{{ asset('images/logo-casino.png') }}" alt="Logo Casino" class="img-fluid mb-4 d-block mx-auto"
-            style="max-width: 350px;">
+    <div class="container position-relative" style="z-index: 2;">
+        
+        {# --- LOGO AVEC ANIMATION --- #}
+        <div class="logo-wrapper mb-4">
+            <img src="{{ asset('images/logo-casino.png') }}" alt="Logo Casino" class="img-fluid d-block mx-auto main-logo">
+        </div>
 
-        <h1 class="display-1 fw-bold text-uppercase mb-4 text-warning"
-            style="text-shadow: 0px 0px 20px rgba(255, 0, 0, 0.6);">
+        {# --- TITRE PRINCIPAL --- #}
+        <h1 class="display-1 fw-bold text-uppercase mb-2 text-warning main-title-home">
             Casino Royal
         </h1>
 
-        <p class="fst-italic mb-5 fs-5" style="color: #ff8c00; letter-spacing: 1px;">
-            Rejoignez l'élite
-        </p>
+        <div class="d-flex justify-content-center align-items-center gap-3 mb-5">
+            <div class="divider-gold"></div>
+            <p class="text-uppercase mb-0 fw-light" style="color: #ff8c00; letter-spacing: 6px; font-size: 0.9rem;">
+                L'Excellence du Jeu
+            </p>
+            <div class="divider-gold-reverse"></div>
+        </div>
 
-        <div class="text-center">
-            <div class="mb-4">
-                <a href="/connexion" class="btn btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg"
-                    style="background: linear-gradient(45deg, #ff4500, #ff8c00); font-size: 1.1rem;">
-                    CONNEXION
-                </a>
-            </div>
+        {# --- ACTIONS --- #}
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="d-grid gap-3">
+                    {# Bouton Connexion (Principal) #}
+                    <a href="/connexion" class="btn-play gold py-3 fs-5 shadow-lg">
+                        CONNEXION
+                    </a>
 
-            <div>
-                <a href="/inscription" class="btn btn-sm rounded-pill px-4 py-2 fw-semibold"
-                    style="color: #ff8c00; border: 1px solid #ff8c00; opacity: 0.8;">
-                    CRÉER UN COMPTE
-                </a>
+                    {# Bouton Inscription (Secondaire) #}
+                    <a href="/inscription" class="exit-btn text-uppercase fw-bold py-2 mt-2" style="font-size: 0.9rem;">
+                        <i class="bi bi-person-plus me-2"></i>Rejoindre l'élite
+                    </a>
+                </div>
             </div>
         </div>
     </div>
+
+    {# --- PIED DE PAGE DISCRET --- #}
+    <div class="position-absolute bottom-0 w-100 p-4 opacity-25">
+        <p class="small mb-0 text-white-50">Interdit aux moins de 18 ans • Jouez avec modération</p>
+    </div>
 </div>
+
+<style>
+    /* TITRE ET LOGO */
+    .main-title-home {
+        font-size: calc(3rem + 5vw);
+        text-shadow: 0px 0px 40px rgba(255, 140, 0, 0.4);
+        letter-spacing: -2px;
+    }
+
+    .main-logo {
+        max-width: 300px;
+        filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.2));
+        animation: float 6s ease-in-out infinite;
+    }
+
+    /* DIVISEURS */
+    .divider-gold { height: 1px; width: 60px; background: linear-gradient(to right, transparent, #ff8c00); }
+    .divider-gold-reverse { height: 1px; width: 60px; background: linear-gradient(to left, transparent, #ff8c00); }
+
+    /* ANIMATIONS */
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+    }
+
+    /* HALO D'AMBIANCE */
+    .ambient-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(255, 140, 0, 0.1) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* ADAPTATION BOUTON SECONDAIRE */
+    .exit-btn {
+        border: 1px solid rgba(255, 140, 0, 0.3);
+        border-radius: 50px;
+        padding: 10px 20px;
+        display: inline-block;
+        transition: 0.3s;
+    }
+    .exit-btn:hover {
+        background: rgba(255, 140, 0, 0.05);
+        border-color: #ff8c00;
+        color: #ff8c00 !important;
+    }
+</style>
 {% endblock %}

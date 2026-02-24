@@ -3,89 +3,102 @@
 {% block title %}Casino Royal | Inscription{% endblock %}
 
 {% block body %}
-<div class="bg-casino d-flex flex-column justify-content-center align-items-center min-vh-100 py-5">
-
+<div class="bg-casino min-vh-100 py-5 d-flex align-items-center">
     <div class="container">
-        <h1 class="display-1 fw-bold text-uppercase mb-5 text-warning text-center"
-            style="text-shadow: 0px 0px 20px rgba(255, 0, 0, 0.6);">
-            Casino Royal
-        </h1>
+        {# --- TITRE PRINCIPAL --- #}
+        <div class="text-center mb-5">
+            <h1 class="display-1 fw-bold text-uppercase mb-2 text-warning"
+                style="text-shadow: 0px 0px 30px rgba(255, 0, 0, 0.8); letter-spacing: -2px;">
+                Casino Royal
+            </h1>
+            <p class="text-white-50 text-uppercase fw-light" style="letter-spacing: 5px; font-size: 0.9rem;">Devenir Membre de l'Élite</p>
+        </div>
 
         <div class="row justify-content-center">
-            <div class="col-12 col-lg-8">
-                <div class="p-5 rounded-4 shadow-lg"
-                    style="background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 140, 0, 0.2);">
+            <div class="col-12 col-lg-8 col-xl-7">
+                {# --- UTILISATION DE LA NEON-CARD CENTRALISÉE --- #}
+                <div class="neon-card gold-glow shadow-lg">
+                    <div class="card-inner p-4 p-md-5">
+                        
+                        <h2 class="h4 text-white text-center mb-5 fw-bold text-uppercase" style="letter-spacing: 2px;">
+                            Ouverture de Compte
+                        </h2>
 
-                    <h2 class="h3 text-white text-center mb-5 fw-light text-uppercase" style="letter-spacing: 3px;">
-                        Rejoindre l'élite</h2>
-
-                    <form action="/inscription" method="POST">
-                        <div class="mb-4">
-                            <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Nom d'utilisateur</label>
-                            <input type="text" class="form-control bg-dark text-white border-0 py-2 px-3 shadow-none"
-                                style="border-left: 3px solid #ff8c00 !important;">
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <label class="form-label small text-uppercase fw-bold"
-                                    style="color: #ff8c00;">Nom</label>
-                                <input type="text"
-                                    class="form-control bg-dark text-white border-0 py-2 px-3 shadow-none"
-                                    placeholder="Nom" style="border-left: 3px solid #ff8c00 !important;">
+                        <form action="/inscription" method="POST">
+                            {# Identifiant #}
+                            <div class="mb-4">
+                                <label class="form-label small text-uppercase fw-bold text-warning">Nom d'utilisateur</label>
+                                <input type="text" class="form-control bank-input border-warning-subtle" placeholder="Pseudo Gold">
                             </div>
 
-                            <div class="col-md-6 mb-4">
-                                <label class="form-label small text-uppercase fw-bold"
-                                    style="color: #ff8c00;">Prénom</label>
-                                <input type="text"
-                                    class="form-control bg-dark text-white border-0 py-2 px-3 shadow-none"
-                                    placeholder="Prénom" style="border-left: 3px solid #ff8c00 !important;">
+                            {# Nom & Prénom #}
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label small text-uppercase fw-bold text-warning">Nom</label>
+                                    <input type="text" class="form-control bank-input border-warning-subtle" placeholder="Nom">
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label small text-uppercase fw-bold text-warning">Prénom</label>
+                                    <input type="text" class="form-control bank-input border-warning-subtle" placeholder="Prénom">
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="mb-4">
-                            <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Date de
-                                naissance</label>
-                            <input type="date" class="form-control bg-dark text-white border-0 py-2 px-3 shadow-none"
-                                style="border-left: 3px solid #ff8c00 !important;">
-                        </div>
+                            {# Mail & Tel #}
+                            <div class="row">
+                                <div class="col-md-7 mb-4">
+                                    <label class="form-label small text-uppercase fw-bold text-warning">Adresse Mail</label>
+                                    <input type="email" class="form-control bank-input border-warning-subtle" placeholder="exemple@mail.com">
+                                </div>
+                                <div class="col-md-5 mb-4">
+                                    <label class="form-label small text-uppercase fw-bold text-warning">Téléphone</label>
+                                    <input type="tel" class="form-control bank-input border-warning-subtle" placeholder="06 ...">
+                                </div>
+                            </div>
 
-                        <div class="mb-4">
-                            <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Adresse
-                                Mail</label>
-                            <input type="email" class="form-control bg-dark text-white border-0 py-2 px-3 shadow-none"
-                                placeholder="exemple@mail.com" style="border-left: 3px solid #ff8c00 !important;">
-                        </div>
+                            {# Password #}
+                            <div class="mb-5">
+                                <label class="form-label small text-uppercase fw-bold text-warning">Mot de passe</label>
+                                <input type="password" class="form-control bank-input border-warning-subtle" placeholder="••••••••">
+                            </div>
 
-                        <div class="mb-4">
-                            <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Numéro de
-                                téléphone</label>
-                            <input type="tel" class="form-control bg-dark text-white border-0 py-2 px-3 shadow-none"
-                                placeholder="06 00 00 00 00" style="border-left: 3px solid #ff8c00 !important;">
-                        </div>
-
-                        <div class="mb-5">
-                            <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Mot de passe</label>
-                            <input type="password" class="form-control bg-dark text-white border-0 py-2 px-3 shadow-none"
-                                style="border-left: 3px solid #ff8c00 !important;">
-                        </div>
-
-                        <div class="text-center">
-                            <button type="submit"
-                                class="btn btn-lg rounded-pill px-5 py-3 fw-bold text-white shadow-lg border-0"
-                                style="background: linear-gradient(45deg, #ff4500, #ff8c00); font-size: 1.2rem; min-width: 300px;">
-                                CRÉER MON COMPTE
-                            </button>
-                        </div>
-                    </form>
+                            {# Bouton Valider #}
+                            <div class="text-center">
+                                <button type="submit" class="btn-play gold w-100 py-3 shadow-lg">
+                                    CRÉER MON COMPTE ROYAL
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
+                {# --- LIEN RETOUR --- #}
                 <div class="text-center mt-4">
-                    <a href="/home" class="text-white-50 text-decoration-none">← Acceuil</a>
+                    <a href="/home" class="exit-btn">← RETOUR À L'ACCUEIL</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* On réutilise les styles d'inputs définis pour la banque pour garder une cohérence */
+    .bank-input {
+        background: #151515 !important;
+        border: none !important;
+        border-bottom: 2px solid rgba(255, 140, 0, 0.3) !important;
+        color: white !important;
+        padding: 12px 15px !important;
+        transition: 0.3s;
+    }
+    .bank-input:focus {
+        border-bottom-color: #ff8c00 !important;
+        box-shadow: 0 5px 15px rgba(255, 140, 0, 0.1);
+    }
+    
+    /* Style spécifique pour les calendriers (date) sur Chrome/Safari */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) sepia(100%) saturate(1000%) hue-rotate(10deg);
+        cursor: pointer;
+    }
+</style>
 {% endblock %}

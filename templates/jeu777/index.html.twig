@@ -3,42 +3,33 @@
 {% block title %}Casino Royal | Le 777{% endblock %}
 
 {% block body %}
-<div class="bg-casino min-vh-100 py-5 position-relative d-flex align-items-center" style="background: radial-gradient(circle, #1a1a1a 0%, #000000 100%); overflow: hidden;">
+<div class="bg-casino min-vh-100 py-5 d-flex align-items-center">
 
-
-    <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3">
+    {# --- HEADER UTILISATEUR --- #}
+    <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3" style="z-index: 1000;">
         <div class="text-end">
-            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 1px;">
-                {{ app.user.username|default('Joueur') }}
-            </div>
-            <div class="text-warning fw-bold fs-4">
-                5 000 <small class="text-white-50" style="font-size: 0.6em;">jetons</small>
-            </div>
+            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">{{ app.user.username|default('Joueur') }}</div>
+            <div class="text-warning fw-bold fs-3">5 000 <small class="text-white-50" style="font-size: 0.5em;">JETONS</small></div>
         </div>
-        <a href="/depotretrait" class="btn rounded-circle d-flex align-items-center justify-content-center shadow-lg"
-            style="background: linear-gradient(45deg, #ff4500, #ff8c00); width: 45px; height: 45px; border: none; color: white; text-decoration: none;">
-            <i class="fs-4 fw-bold">+</i>
-        </a>
+        <a href="/depotretrait" class="btn-add-funds shadow-lg"><span>+</span></a>
     </div>
-    
+
     <div class="container text-center">
         {# --- TITRE --- #}
         <div class="mb-5">
-            <h1 class="display-1 fw-bold text-uppercase mb-2 text-warning main-title">
-                Le 777
-            </h1>
+            <h1 class="display-1 fw-bold text-uppercase mb-2 text-warning main-title">Le 777</h1>
             <div class="d-flex justify-content-center align-items-center gap-3">
                 <div class="divider-gold"></div>
-                <button class="btn-info-circle" data-bs-toggle="modal" data-bs-target="#rulesModal">?</button>
+                <button class="btn-info-circle-gold" data-bs-toggle="modal" data-bs-target="#rulesModal">?</button>
                 <div class="divider-gold-reverse"></div>
             </div>
         </div>
 
-        {# --- MACHINE À SOUS (Néons animés) --- #}
+        {# --- MACHINE À SOUS --- #}
         <div class="row justify-content-center mb-5">
             <div class="col-auto">
-                <div class="slot-machine-container gold-glow">
-                    <div class="slot-inner d-flex gap-3 p-4">
+                <div class="neon-card gold-glow shadow-lg">
+                    <div class="card-inner d-flex gap-3 p-4">
                         <div class="reel"><span class="reel-number">7</span></div>
                         <div class="reel"><span class="reel-number">7</span></div>
                         <div class="reel"><span class="reel-number">7</span></div>
@@ -50,20 +41,18 @@
         {# --- PANEL DE MISE --- #}
         <div class="row justify-content-center">
             <div class="col-12 col-md-5 col-lg-4">
-                <div class="bet-card">
+                <div class="bet-card-gold">
                     <div class="bet-inner p-4">
                         <label class="form-label small text-uppercase fw-bold text-warning mb-3" style="letter-spacing: 2px;">Mise en jeu</label>
-                        <div class="input-group mb-4 shadow-sm">
-                            <input type="number" class="form-control bet-input" value="10" min="1">
-                            <span class="input-group-text bg-dark text-white-50 border-0">JETONS</span>
+                        <div class="input-group mb-4">
+                            <input type="number" class="form-control bet-input-gold" value="10" min="1">
+                            <span class="input-group-text bg-dark text-white-50 border-0 px-3">JETONS</span>
                         </div>
 
-                        <button class="btn-play gold w-100 mb-3">
-                            LANCER LE TIRAGE
-                        </button>
+                        <button class="btn-play gold w-100 mb-3">LANCER LE TIRAGE</button>
                         
-                        <a href="/menu" class="text-white-50 small text-decoration-none exit-btn">
-                            <i class="bi bi-arrow-left"></i> RETOUR AU SALON
+                        <a href="/menu" class="exit-btn d-block mt-2">
+                            <i class="bi bi-arrow-left me-1"></i>RETOUR AU SALON
                         </a>
                     </div>
                 </div>
@@ -75,124 +64,62 @@
 {# --- MODAL STYLISÉE --- #}
 <div class="modal fade" id="rulesModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content slot-inner border-warning shadow-lg">
+        <div class="modal-content bg-dark border-warning shadow-lg">
             <div class="modal-header border-0">
                 <h5 class="modal-title text-warning fw-bold text-uppercase">Table des Gains</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body text-center py-4">
-                <div class="gain-row gold"><span>7 - 7 - 7</span> <strong>JACKPOT x50</strong></div>
-                <div class="gain-row"><span>3 Identiques</span> <strong>MISE x10</strong></div>
-                <div class="gain-row"><span>2 Identiques</span> <strong>MISE x2</strong></div>
+            <div class="modal-body text-center py-4 text-white">
+                <div class="d-flex justify-content-between border-bottom border-secondary p-2 text-warning">
+                    <span>7 - 7 - 7</span> <strong>JACKPOT x50</strong>
+                </div>
+                <div class="d-flex justify-content-between border-bottom border-secondary p-2">
+                    <span>3 Identiques</span> <strong>x10</strong>
+                </div>
+                <div class="d-flex justify-content-between p-2">
+                    <span>2 Identiques</span> <strong>x2</strong>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    /* TITRE ET DIVISEURS */
-    .main-title {
-        text-shadow: 0px 0px 30px rgba(255, 140, 0, 0.6);
-        font-size: calc(2.5rem + 4vw);
-        letter-spacing: -2px;
-    }
-    .divider-gold { height: 1px; width: 100px; background: linear-gradient(to right, transparent, #ff8c00); }
-    .divider-gold-reverse { height: 1px; width: 100px; background: linear-gradient(to left, transparent, #ff8c00); }
-
-    /* SLOT MACHINE STYLING */
-    .slot-machine-container {
-        position: relative;
-        background: rgba(0, 0, 0, 0.8);
-        border-radius: 25px;
-        padding: 3px;
-        overflow: hidden;
-    }
-    .slot-machine-container::before {
-        content: "";
-        position: absolute;
-        top: -50%; left: -50%; width: 200%; height: 200%;
-        animation: rotate-neon 4s linear infinite;
-        background: conic-gradient(#ff8c00, transparent, #ffc107, transparent, #ff8c00);
-        z-index: 1;
-    }
-
-    .slot-inner {
-        position: relative;
-        background: #0a0a0a;
-        border-radius: 22px;
-        z-index: 2;
-        backdrop-filter: blur(10px);
-    }
+    /* Spécifique à la Slot Machine */
+    .main-title { text-shadow: 0px 0px 30px rgba(255, 140, 0, 0.6); font-size: calc(2.5rem + 4vw); }
+    .divider-gold { height: 1px; width: 80px; background: linear-gradient(to right, transparent, #ff8c00); }
+    .divider-gold-reverse { height: 1px; width: 80px; background: linear-gradient(to left, transparent, #ff8c00); }
 
     .reel {
         background: linear-gradient(145deg, #1a1a1a, #000);
-        width: 110px;
-        height: 160px;
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        width: 100px; height: 150px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
         border: 1px solid rgba(255, 140, 0, 0.2);
         box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
     }
 
     .reel-number {
-        font-size: 5rem;
-        font-weight: 900;
-        color: white;
-        text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        font-size: 4.5rem; font-weight: 900; color: white;
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
     }
 
-    /* FORM & INPUTS */
-    .bet-card {
-        background: rgba(255, 140, 0, 0.1);
+    .bet-card-gold {
+        background: rgba(255, 140, 0, 0.05);
         border: 1px solid rgba(255, 140, 0, 0.2);
-        border-radius: 20px;
-        padding: 2px;
+        border-radius: 20px; padding: 2px;
     }
-    .bet-inner {
-        background: #0a0a0a;
-        border-radius: 18px;
+    .bet-inner { background: #0a0a0a; border-radius: 18px; }
+
+    .bet-input-gold {
+        background: transparent !important; border: none !important;
+        border-bottom: 2px solid #ff8c00 !important; color: #ffc107 !important;
+        font-weight: bold; font-size: 1.4rem; text-align: center;
     }
 
-    .bet-input {
-        background: #1a1a1a !important;
-        border: none !important;
-        color: #ffc107 !important;
-        font-weight: bold;
-        font-size: 1.5rem;
-        text-align: center;
-        border-bottom: 2px solid #ff8c00 !important;
-    }
-
-    /* REUSE MENU COMPONENTS */
-    .btn-add-funds {
-        background: linear-gradient(45deg, #ff4500, #ff8c00);
-        width: 45px; height: 45px; border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        color: white; text-decoration: none; font-weight: bold; font-size: 1.5rem;
-        transition: 0.3s; border: none;
-    }
-    .btn-play {
-        display: block; text-decoration: none; font-weight: 800;
-        padding: 15px; border-radius: 50px; transition: 0.3s; color: white; border: none;
-    }
-    .btn-play.gold { background: #ff8c00; box-shadow: 0 5px 15px rgba(255, 140, 0, 0.3); }
-    .btn-play:hover { transform: translateY(-3px); filter: brightness(1.2); box-shadow: 0 0 20px #ff8c00; }
-
-    .btn-info-circle {
+    .btn-info-circle-gold {
         background: transparent; border: 1px solid #ff8c00; color: #ff8c00;
         width: 40px; height: 40px; border-radius: 50%; transition: 0.3s;
     }
-    .btn-info-circle:hover { background: #ff8c00; color: black; box-shadow: 0 0 15px #ff8c00; }
-
-    .gain-row {
-        display: flex; justify-content: space-between; padding: 10px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .gain-row.gold { color: #ffc107; font-size: 1.2rem; }
-
-    @keyframes rotate-neon { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .exit-btn:hover { color: white !important; letter-spacing: 1px; transition: 0.4s; }
+    .btn-info-circle-gold:hover { background: #ff8c00; color: black; }
 </style>
 {% endblock %}

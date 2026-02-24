@@ -3,53 +3,79 @@
 {% block title %}Casino Royal | Connexion{% endblock %}
 
 {% block body %}
-<div class="bg-casino d-flex flex-column justify-content-center align-items-center min-vh-100 py-5">
-
+<div class="bg-casino min-vh-100 py-5 d-flex align-items-center">
     <div class="container">
-        <h1 class="display-1 fw-bold text-uppercase text-center mb-5 text-warning"
-            style="text-shadow: 0px 0px 20px rgba(255, 0, 0, 0.6);">
-            Casino Royal
-        </h1>
+        {# --- TITRE --- #}
+        <div class="text-center mb-5">
+            <h1 class="display-1 fw-bold text-uppercase mb-2 text-warning"
+                style="text-shadow: 0px 0px 30px rgba(255, 0, 0, 0.8); letter-spacing: -2px;">
+                Casino Royal
+            </h1>
+            <p class="text-white-50 text-uppercase fw-light" style="letter-spacing: 5px; font-size: 0.9rem;">Accès Membres Privilégiés</p>
+        </div>
 
         <div class="row justify-content-center">
             <div class="col-12 col-md-6 col-lg-4">
-                <div class="p-4 rounded-4 shadow-lg" style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3);">
-                    
-                    <h2 class="h4 text-white text-center mb-4 fw-light text-uppercase" style="letter-spacing: 2px;">Identification</h2>
+                {# --- NEON CARD GOLD --- #}
+                <div class="neon-card gold-glow shadow-lg">
+                    <div class="card-inner p-4 p-md-5">
+                        
+                        <h2 class="h4 text-white text-center mb-4 fw-bold text-uppercase" style="letter-spacing: 2px;">
+                            Identification
+                        </h2>
 
-                    <form action="/connexion" method="POST">
-                        <div class="mb-3">
-                            <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Nom d'utilisateur</label>
-                            <input type="text" class="form-control bg-dark text-white border-0 py-3 px-4 shadow-none" 
-                                   placeholder="Votre pseudo" 
-                                   style="border-left: 3px solid #ff8c00 !important;">
+                        <form action="/connexion" method="POST">
+                            <div class="mb-3">
+                                <label class="form-label small text-uppercase fw-bold text-warning">Nom d'utilisateur</label>
+                                <input type="text" name="_username" class="form-control bank-input border-warning-subtle" 
+                                       placeholder="Votre pseudo" required autofocus>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small text-uppercase fw-bold text-warning">Mot de passe</label>
+                                <input type="password" name="_password" class="form-control bank-input border-warning-subtle" 
+                                       placeholder="••••••••" required>
+                            </div>
+
+                            <button type="submit" class="btn-play gold w-100 py-3 mb-3">
+                                ENTRER DANS LE SALON
+                            </button>
+                        </form>
+
+                        <div class="text-center">
+                            <a href="#" class="exit-btn" style="font-size: 0.75rem;">Mot de passe oublié ?</a>
                         </div>
-
-                        <div class="mb-4">
-                            <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Mot de passe</label>
-                            <input type="password" class="form-control bg-dark text-white border-0 py-3 px-4 shadow-none" 
-                                   placeholder="••••••••" 
-                                   style="border-left: 3px solid #ff8c00 !important;">
-                        </div>
-
-                        <button type="submit" class="btn w-100 rounded-pill py-3 fw-bold text-white shadow-lg border-0 mb-3"
-                                style="background: linear-gradient(45deg, #ff4500, #ff8c00); font-size: 1.1rem;">
-                            ENTRER DANS LE SALON
-                        </button>
-                    </form>
-
-                    <div class="text-center">
-                        <a href="#" class="text-white-50 small text-decoration-none">Mot de passe oublié ?</a>
                     </div>
                 </div>
 
+                {# --- LIEN VERS INSCRIPTION --- #}
                 <div class="text-center mt-4">
                     <p class="text-white-50">Pas encore membre ? 
-                        <a href="/inscription" class="fw-bold text-decoration-none" style="color: #ff8c00;">Créer un compte</a>
+                        <a href="/inscription" class="fw-bold text-decoration-none exit-btn" style="color: #ff8c00 !important; opacity: 1;">
+                            Rejoindre l'élite
+                        </a>
                     </p>
+                    <a href="/home" class="exit-btn mt-2 d-inline-block">← Retour à l'accueil</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Harmonisation des inputs avec le reste du site */
+    .bank-input {
+        background: #151515 !important;
+        border: none !important;
+        border-bottom: 2px solid rgba(255, 140, 0, 0.2) !important;
+        color: white !important;
+        padding: 12px 15px !important;
+        transition: 0.3s;
+    }
+    .bank-input:focus {
+        border-bottom-color: #ff8c00 !important;
+        background: #1a1a1a !important;
+        box-shadow: 0 5px 15px rgba(255, 140, 0, 0.05);
+    }
+</style>
 {% endblock %}

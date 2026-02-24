@@ -3,28 +3,21 @@
 {% block title %}Casino Royal | Bingo Royal{% endblock %}
 
 {% block body %}
-<div class="bg-casino min-vh-100 py-5 position-relative d-flex align-items-center" style="background: radial-gradient(circle, #05161a 0%, #000000 100%); overflow: hidden;">
+<div class="bg-casino min-vh-100 py-5 d-flex align-items-center" style="background: radial-gradient(circle, #05161a 0%, #000000 100%);">
 
-
-    <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3">
+    {# --- HEADER UTILISATEUR --- #}
+    <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3" style="z-index: 1000;">
         <div class="text-end">
-            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 1px;">
-                {{ app.user.username|default('Joueur') }}
-            </div>
-            <div class="text-warning fw-bold fs-4">
-                5 000 <small class="text-white-50" style="font-size: 0.6em;">jetons</small>
-            </div>
+            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">{{ app.user.username|default('Joueur') }}</div>
+            <div class="text-warning fw-bold fs-3">5 000 <small class="text-white-50" style="font-size: 0.5em;">JETONS</small></div>
         </div>
-        <a href="/depotretrait" class="btn rounded-circle d-flex align-items-center justify-content-center shadow-lg"
-            style="background: linear-gradient(45deg, #ff4500, #ff8c00); width: 45px; height: 45px; border: none; color: white; text-decoration: none;">
-            <i class="fs-4 fw-bold">+</i>
-        </a>
+        <a href="/depotretrait" class="btn-add-funds shadow-lg"><span>+</span></a>
     </div>
-    
+
     <div class="container text-center">
         {# --- TITRE --- #}
         <div class="mb-5">
-            <h1 class="display-1 fw-bold text-uppercase mb-2 text-info main-title-blue">
+            <h1 class="display-1 fw-bold text-uppercase mb-2 text-info" style="text-shadow: 0px 0px 30px rgba(13, 202, 240, 0.6);">
                 Bingo Royal
             </h1>
             <div class="d-flex justify-content-center align-items-center gap-3">
@@ -34,29 +27,29 @@
             </div>
         </div>
 
-        {# --- ZONE DES BOULES TIRÉES --- #}
+        {# --- ZONE DES BOULES --- #}
         <div class="mb-5">
             <p class="text-white-50 text-uppercase small mb-4" style="letter-spacing: 4px;">Tirage de la Cour</p>
             <div class="d-flex justify-content-center flex-wrap gap-3">
                 {% for i in 1..5 %}
                 <div class="bingo-ball-placeholder">
-                    <div class="ball-inner">?</div>
+                    <div class="ball-inner shadow-text">?</div>
                 </div>
                 {% endfor %}
             </div>
         </div>
 
-        {# --- GRILLE DE SÉLECTION --- #}
+        {# --- GRILLE ET MISE --- #}
         <div class="row justify-content-center">
             <div class="col-12 col-lg-8">
-                <div class="bingo-card-container blue-glow">
-                    <div class="bingo-inner p-4">
+                <div class="neon-card blue-glow">
+                    <div class="card-inner p-4">
                         <div class="row align-items-center">
                             {# Panneau gauche : Mise #}
-                            <div class="col-md-4 border-end-custom">
-                                <label class="form-label small text-uppercase fw-bold text-info mb-3" style="letter-spacing: 2px;">Mise</label>
+                            <div class="col-md-4 border-end border-secondary border-opacity-25">
+                                <label class="form-label small text-uppercase fw-bold text-info mb-3">Mise</label>
                                 <input type="number" class="form-control bet-input-blue mb-4" value="10" min="1">
-                                <p class="text-white-50 small">Sélectionnez <span class="text-info fw-bold">3 numéros</span> pour valider votre grille.</p>
+                                <p class="text-white-50 small">Sélectionnez <span class="text-info fw-bold">3 numéros</span>.</p>
                             </div>
 
                             {# Panneau droit : Grille #}
@@ -74,9 +67,7 @@
                             <button class="btn-play blue w-100 mb-3">
                                 <i class="bi bi-cpu-fill me-2"></i> LANCER LE TIRAGE
                             </button>
-                            <a href="/menu" class="text-white-50 small text-decoration-none exit-btn">
-                                QUITTER LE BINGO
-                            </a>
+                            <a href="/menu" class="exit-btn d-block mt-2">QUITTER LE BINGO</a>
                         </div>
                     </div>
                 </div>
@@ -85,7 +76,7 @@
     </div>
 </div>
 
-{# --- MODAL RÈGLES --- #}
+{# --- MODAL --- #}
 <div class="modal fade" id="rulesModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark border-info shadow-lg">
@@ -93,118 +84,55 @@
                 <h5 class="modal-title text-info fw-bold text-uppercase">Règles du Bingo</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body text-center py-4">
-                <div class="gain-row-blue"><span>3 Numéros</span> <strong class="text-info">x20</strong></div>
-                <div class="gain-row-blue"><span>2 Numéros</span> <strong class="text-white">x5</strong></div>
-                <div class="gain-row-blue"><span>1 Numéro</span> <strong class="text-white-50">Remboursé</strong></div>
-                <p class="mt-4 small text-white-50 italic">Les boules sont tirées par le Grand Algorithme Royal.</p>
+            <div class="modal-body text-center py-4 text-white">
+                <div class="d-flex justify-content-between border-bottom border-secondary p-2"><span>3 Numéros</span> <strong class="text-info">x20</strong></div>
+                <div class="d-flex justify-content-between border-bottom border-secondary p-2"><span>2 Numéros</span> <strong>x5</strong></div>
+                <div class="d-flex justify-content-between p-2"><span>1 Numéro</span> <strong class="text-white-50">Remboursé</strong></div>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    /* TITRES ET ACCENTS BLEUS */
-    .main-title-blue {
-        text-shadow: 0px 0px 30px rgba(13, 202, 240, 0.6);
-        font-size: calc(2rem + 4vw);
-        letter-spacing: -1px;
-    }
-    .divider-blue { height: 1px; width: 100px; background: linear-gradient(to right, transparent, #0dcaf0); }
-    .divider-blue-reverse { height: 1px; width: 100px; background: linear-gradient(to left, transparent, #0dcaf0); }
+    /* Spécifique au Bingo */
+    .divider-blue { height: 1px; width: 80px; background: linear-gradient(to right, transparent, #0dcaf0); }
+    .divider-blue-reverse { height: 1px; width: 80px; background: linear-gradient(to left, transparent, #0dcaf0); }
 
-    /* BOULES DE BINGO */
     .bingo-ball-placeholder {
-        width: 75px; height: 75px;
+        width: 65px; height: 65px;
         background: rgba(13, 202, 240, 0.05);
         border: 2px dashed rgba(13, 202, 240, 0.4);
-        border-radius: 50%;
-        padding: 5px;
+        border-radius: 50%; padding: 5px;
     }
     .ball-inner {
-        width: 100%; height: 100%;
-        background: #0a0a0a;
-        border-radius: 50%;
+        width: 100%; height: 100%; background: #0a0a0a; border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
-        color: #0dcaf0; font-weight: 900; font-size: 1.5rem;
+        color: #0dcaf0; font-weight: 900; font-size: 1.4rem;
         box-shadow: inset 0 0 15px rgba(13, 202, 240, 0.2);
     }
 
-    /* CONTAINER GRILLE (Néon) */
-    .bingo-card-container {
-        position: relative;
-        background: rgba(0, 0, 0, 0.8);
-        border-radius: 30px;
-        padding: 3px;
-        overflow: hidden;
-    }
-    .bingo-card-container::before {
-        content: "";
-        position: absolute;
-        width: 200%; height: 200%; top: -50%; left: -50%;
-        animation: rotate-neon 5s linear infinite;
-        background: conic-gradient(#0dcaf0, transparent, #007bff, transparent, #0dcaf0);
-    }
-    .bingo-inner {
-        position: relative;
-        background: #0a0a0a;
-        border-radius: 27px;
-        z-index: 2;
-        backdrop-filter: blur(10px);
-    }
-
-    /* GRILLE DE NUMÉROS */
-    .bingo-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 12px;
-    }
+    .bingo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
     .btn-bingo-num {
-        height: 60px;
-        background: #1a1a1a;
-        border: 1px solid rgba(255,255,255,0.1);
-        color: white;
-        font-weight: bold;
-        display: flex; align-items: center; justify-content: center;
-        transition: 0.3s;
-        border-radius: 12px;
+        height: 50px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1);
+        color: white; font-weight: bold; display: flex; align-items: center; justify-content: center;
+        transition: 0.3s; border-radius: 10px;
     }
-    .btn-bingo-num:hover { background: #252525; color: #0dcaf0; border-color: #0dcaf0; }
-    
+    .btn-bingo-num:hover { color: #0dcaf0; border-color: #0dcaf0; }
     .btn-check:checked + .btn-bingo-num {
-        background: #0dcaf0;
-        color: #000;
-        font-weight: 900;
-        box-shadow: 0 0 20px rgba(13, 202, 240, 0.6);
-        border-color: #fff;
+        background: #0dcaf0; color: #000; font-weight: 900;
+        box-shadow: 0 0 15px #0dcaf0; border-color: #fff;
     }
 
-    /* INPUTS & BOUTONS */
     .bet-input-blue {
-        background: #151515 !important;
-        border: none !important;
-        border-bottom: 2px solid #0dcaf0 !important;
-        color: white !important;
-        text-align: center; font-weight: bold; font-size: 1.4rem;
+        background: transparent !important; border: none !important;
+        border-bottom: 2px solid #0dcaf0 !important; color: white !important;
+        text-align: center; font-weight: bold; font-size: 1.3rem;
     }
-    .btn-play.blue {
-        background: #0dcaf0; color: black; border: none; padding: 15px; border-radius: 50px;
-        font-weight: 800; transition: 0.3s;
-    }
-    .btn-play.blue:hover { transform: translateY(-3px); box-shadow: 0 0 25px #0dcaf0; filter: brightness(1.1); }
-
-    .border-end-custom { border-right: 1px solid rgba(255,255,255,0.1); }
-    @media (max-width: 768px) { .border-end-custom { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; } }
 
     .btn-info-circle-blue {
         background: transparent; border: 1px solid #0dcaf0; color: #0dcaf0;
         width: 40px; height: 40px; border-radius: 50%; transition: 0.3s;
     }
-    .gain-row-blue {
-        display: flex; justify-content: space-between; padding: 12px;
-        border-bottom: 1px solid rgba(13, 202, 240, 0.1); color: #ccc;
-    }
-
-    @keyframes rotate-neon { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .btn-info-circle-blue:hover { background: #0dcaf0; color: black; }
 </style>
 {% endblock %}
