@@ -1,103 +1,207 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Casino Royal | Bingo{% endblock %}
+{% block title %}Casino Royal | Bingo Royal{% endblock %}
 
 {% block body %}
-<div class="bg-casino d-flex flex-column justify-content-center align-items-center min-vh-100 py-5">
+<div class="bg-casino min-vh-100 py-5 position-relative d-flex align-items-center" style="background: radial-gradient(circle, #05161a 0%, #000000 100%); overflow: hidden;">
 
-
-    <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3">
+    {# --- TOP BAR --- #}
+    <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3" style="z-index: 1000;">
         <div class="text-end">
-            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 1px;">
-                {{ app.user.username|default('Joueur') }}
-            </div>
-            <div class="text-warning fw-bold fs-4">
-                5 000 <small class="text-white-50" style="font-size: 0.6em;">jetons</small>
+            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">{{ app.user.username|default('Membre Gold') }}</div>
+            <div class="text-warning fw-bold fs-3" style="text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);">
+                5 000 <small class="text-white-50" style="font-size: 0.5em;">JETONS</small>
             </div>
         </div>
-        <a href="/depotretrait" class="btn rounded-circle d-flex align-items-center justify-content-center shadow-lg"
-            style="background: linear-gradient(45deg, #ff4500, #ff8c00); width: 45px; height: 45px; border: none; color: white; text-decoration: none;">
-            <i class="fs-4 fw-bold">+</i>
+        <a href="/depotretrait" class="btn-add-funds shadow-lg">
+            <span>+</span>
         </a>
     </div>
-    
+
     <div class="container text-center">
-        <div class="d-flex justify-content-center align-items-center mb-5">
-            <h1 class="display-1 fw-bold text-uppercase mb-0 text-warning"
-                style="text-shadow: 0px 0px 20px rgba(255, 0, 0, 0.6);">
+        {# --- TITRE --- #}
+        <div class="mb-5">
+            <h1 class="display-1 fw-bold text-uppercase mb-2 text-info main-title-blue">
                 Bingo Royal
             </h1>
-            <button class="ms-4 btn btn-outline-warning rounded-circle fw-bold" 
-                    style="width: 50px; height: 50px; font-size: 1.5rem;"
-                    data-bs-toggle="modal" data-bs-target="#rulesModal">?</button>
+            <div class="d-flex justify-content-center align-items-center gap-3">
+                <div class="divider-blue"></div>
+                <button class="btn-info-circle-blue" data-bs-toggle="modal" data-bs-target="#rulesModal">?</button>
+                <div class="divider-blue-reverse"></div>
+            </div>
         </div>
 
+        {# --- ZONE DES BOULES TIRÉES --- #}
         <div class="mb-5">
-            <p class="text-white-50 text-uppercase small mb-3" style="letter-spacing: 3px;">Numéros Tirés</p>
-            <div class="d-flex justify-content-center gap-3">
+            <p class="text-white-50 text-uppercase small mb-4" style="letter-spacing: 4px;">Tirage de la Cour</p>
+            <div class="d-flex justify-content-center flex-wrap gap-3">
                 {% for i in 1..5 %}
-                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-lg" 
-                     style="background: rgba(255, 255, 255, 0.1); border: 2px dashed #ff8c00; width: 70px; height: 70px; font-size: 1.5rem; color: #ff8c00;">
-                    ?
+                <div class="bingo-ball-placeholder">
+                    <div class="ball-inner">?</div>
                 </div>
                 {% endfor %}
             </div>
         </div>
 
+        {# --- GRILLE DE SÉLECTION --- #}
         <div class="row justify-content-center">
-            <div class="col-md-8 p-4 rounded-4 shadow-lg" style="background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 140, 0, 0.3);">
-                
-                <div class="row">
-                    <div class="col-md-4 mb-4">
-                        <label class="form-label small text-uppercase fw-bold" style="color: #ff8c00;">Votre Mise</label>
-                        <input type="number" class="form-control bg-dark text-white border-0 text-center py-2 fw-bold mb-3" 
-                               value="10" min="1" style="border-bottom: 3px solid #ff8c00 !important; font-size: 1.2rem;">
-                        <p class="text-white-50 small">Choisissez 3 numéros</p>
-                    </div>
+            <div class="col-12 col-lg-8">
+                <div class="bingo-card-container blue-glow">
+                    <div class="bingo-inner p-4">
+                        <div class="row align-items-center">
+                            {# Panneau gauche : Mise #}
+                            <div class="col-md-4 border-end-custom">
+                                <label class="form-label small text-uppercase fw-bold text-info mb-3" style="letter-spacing: 2px;">Mise</label>
+                                <input type="number" class="form-control bet-input-blue mb-4" value="10" min="1">
+                                <p class="text-white-50 small">Sélectionnez <span class="text-info fw-bold">3 numéros</span> pour valider votre grille.</p>
+                            </div>
 
-                    <div class="col-md-8 mb-4">
-                        <div class="d-flex flex-wrap justify-content-center gap-2">
-                            {% for n in 1..10 %}
-                            <button class="btn btn-outline-light rounded-3 fw-bold shadow-none" 
-                                    style="width: 55px; height: 55px; transition: 0.2s;">
-                                {{ n }}
+                            {# Panneau droit : Grille #}
+                            <div class="col-md-8 pt-3 pt-md-0">
+                                <div class="bingo-grid">
+                                    {% for n in 1..10 %}
+                                    <input type="checkbox" class="btn-check" id="num-{{ n }}" autocomplete="off">
+                                    <label class="btn btn-bingo-num" for="num-{{ n }}">{{ n }}</label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                            <button class="btn-play blue w-100 mb-3">
+                                <i class="bi bi-cpu-fill me-2"></i> LANCER LE TIRAGE
                             </button>
-                            {% endfor %}
+                            <a href="/menu" class="text-white-50 small text-decoration-none exit-btn">
+                                QUITTER LE BINGO
+                            </a>
                         </div>
                     </div>
                 </div>
-
-                <button class="btn w-100 rounded-pill py-3 fw-bold text-white shadow-lg border-0 mb-3"
-                        style="background: linear-gradient(45deg, #ff4500, #ff8c00); font-size: 1.3rem;">
-                    LANCER LE TIRAGE
-                </button>
-                
-                <a href="/menu" class="text-white-50 small text-decoration-none">Retour au salon</a>
             </div>
         </div>
     </div>
 </div>
 
+{# --- MODAL RÈGLES --- #}
 <div class="modal fade" id="rulesModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark text-white border-warning" style="border: 2px solid #ff8c00;">
+        <div class="modal-content bg-dark border-info shadow-lg">
             <div class="modal-header border-0">
-                <h5 class="modal-title text-warning fw-bold text-uppercase">Règles du Bingo</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title text-info fw-bold text-uppercase">Règles du Bingo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center py-4">
-                <p>Sélectionnez 3 numéros secrets parmi les 10 proposés.</p>
-                <hr class="bg-warning">
-                <ul class="list-unstyled text-start px-4">
-                    <li><strong class="text-warning">3 numéros trouvés</strong> : Jackpot x20</li>
-                    <li><strong class="text-white">2 numéros trouvés</strong> : Gain x5</li>
-                    <li><strong class="text-white-50">1 numéro trouvé</strong> : Mise remboursée</li>
-                </ul>
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-warning rounded-pill px-4 fw-bold" data-bs-dismiss="modal">C'EST PARTI</button>
+                <div class="gain-row-blue"><span>3 Numéros</span> <strong class="text-info">x20</strong></div>
+                <div class="gain-row-blue"><span>2 Numéros</span> <strong class="text-white">x5</strong></div>
+                <div class="gain-row-blue"><span>1 Numéro</span> <strong class="text-white-50">Remboursé</strong></div>
+                <p class="mt-4 small text-white-50 italic">Les boules sont tirées par le Grand Algorithme Royal.</p>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* TITRES ET ACCENTS BLEUS */
+    .main-title-blue {
+        text-shadow: 0px 0px 30px rgba(13, 202, 240, 0.6);
+        font-size: calc(2rem + 4vw);
+        letter-spacing: -1px;
+    }
+    .divider-blue { height: 1px; width: 100px; background: linear-gradient(to right, transparent, #0dcaf0); }
+    .divider-blue-reverse { height: 1px; width: 100px; background: linear-gradient(to left, transparent, #0dcaf0); }
+
+    /* BOULES DE BINGO */
+    .bingo-ball-placeholder {
+        width: 75px; height: 75px;
+        background: rgba(13, 202, 240, 0.05);
+        border: 2px dashed rgba(13, 202, 240, 0.4);
+        border-radius: 50%;
+        padding: 5px;
+    }
+    .ball-inner {
+        width: 100%; height: 100%;
+        background: #0a0a0a;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        color: #0dcaf0; font-weight: 900; font-size: 1.5rem;
+        box-shadow: inset 0 0 15px rgba(13, 202, 240, 0.2);
+    }
+
+    /* CONTAINER GRILLE (Néon) */
+    .bingo-card-container {
+        position: relative;
+        background: rgba(0, 0, 0, 0.8);
+        border-radius: 30px;
+        padding: 3px;
+        overflow: hidden;
+    }
+    .bingo-card-container::before {
+        content: "";
+        position: absolute;
+        width: 200%; height: 200%; top: -50%; left: -50%;
+        animation: rotate-neon 5s linear infinite;
+        background: conic-gradient(#0dcaf0, transparent, #007bff, transparent, #0dcaf0);
+    }
+    .bingo-inner {
+        position: relative;
+        background: #0a0a0a;
+        border-radius: 27px;
+        z-index: 2;
+        backdrop-filter: blur(10px);
+    }
+
+    /* GRILLE DE NUMÉROS */
+    .bingo-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+    }
+    .btn-bingo-num {
+        height: 60px;
+        background: #1a1a1a;
+        border: 1px solid rgba(255,255,255,0.1);
+        color: white;
+        font-weight: bold;
+        display: flex; align-items: center; justify-content: center;
+        transition: 0.3s;
+        border-radius: 12px;
+    }
+    .btn-bingo-num:hover { background: #252525; color: #0dcaf0; border-color: #0dcaf0; }
+    
+    .btn-check:checked + .btn-bingo-num {
+        background: #0dcaf0;
+        color: #000;
+        font-weight: 900;
+        box-shadow: 0 0 20px rgba(13, 202, 240, 0.6);
+        border-color: #fff;
+    }
+
+    /* INPUTS & BOUTONS */
+    .bet-input-blue {
+        background: #151515 !important;
+        border: none !important;
+        border-bottom: 2px solid #0dcaf0 !important;
+        color: white !important;
+        text-align: center; font-weight: bold; font-size: 1.4rem;
+    }
+    .btn-play.blue {
+        background: #0dcaf0; color: black; border: none; padding: 15px; border-radius: 50px;
+        font-weight: 800; transition: 0.3s;
+    }
+    .btn-play.blue:hover { transform: translateY(-3px); box-shadow: 0 0 25px #0dcaf0; filter: brightness(1.1); }
+
+    .border-end-custom { border-right: 1px solid rgba(255,255,255,0.1); }
+    @media (max-width: 768px) { .border-end-custom { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; } }
+
+    .btn-info-circle-blue {
+        background: transparent; border: 1px solid #0dcaf0; color: #0dcaf0;
+        width: 40px; height: 40px; border-radius: 50%; transition: 0.3s;
+    }
+    .gain-row-blue {
+        display: flex; justify-content: space-between; padding: 12px;
+        border-bottom: 1px solid rgba(13, 202, 240, 0.1); color: #ccc;
+    }
+
+    @keyframes rotate-neon { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>
 {% endblock %}
