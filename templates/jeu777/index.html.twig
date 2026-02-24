@@ -5,19 +5,22 @@
 {% block body %}
 <div class="bg-casino min-vh-100 py-5 position-relative d-flex align-items-center" style="background: radial-gradient(circle, #1a1a1a 0%, #000000 100%); overflow: hidden;">
 
-    {# --- TOP BAR (Identique au Menu) --- #}
-    <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3" style="z-index: 1000;">
+
+    <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3">
         <div class="text-end">
-            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">{{ app.user.username|default('Membre Gold') }}</div>
-            <div class="text-warning fw-bold fs-3" style="text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);">
-                5 000 <small class="text-white-50" style="font-size: 0.5em;">JETONS</small>
+            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 1px;">
+                {{ app.user.username|default('Joueur') }}
+            </div>
+            <div class="text-warning fw-bold fs-4">
+                5 000 <small class="text-white-50" style="font-size: 0.6em;">jetons</small>
             </div>
         </div>
-        <a href="/depotretrait" class="btn-add-funds shadow-lg">
-            <span>+</span>
+        <a href="/depotretrait" class="btn rounded-circle d-flex align-items-center justify-content-center shadow-lg"
+            style="background: linear-gradient(45deg, #ff4500, #ff8c00); width: 45px; height: 45px; border: none; color: white; text-decoration: none;">
+            <i class="fs-4 fw-bold">+</i>
         </a>
     </div>
-
+    
     <div class="container text-center">
         {# --- TITRE --- #}
         <div class="mb-5">
