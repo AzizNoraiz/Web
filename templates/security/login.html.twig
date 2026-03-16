@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Casino Royal | Connexion{% endblock %}
+
+{% block body %}
+<div class="bg-casino min-vh-100 py-5 d-flex align-items-center">
+    <div class="container">
+        {# --- TITRE --- #}
+        <div class="text-center mb-5">
+            <h1 class="display-1 fw-bold text-uppercase mb-2 text-warning"
+                style="text-shadow: 0px 0px 30px rgba(255, 0, 0, 0.8); letter-spacing: -2px;">
+                Casino Royal
+            </h1>
+            <p class="text-white-50 text-uppercase fw-light" style="letter-spacing: 5px; font-size: 0.9rem;">Accès Membres Privilégiés</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-4">
+                {# --- NEON CARD GOLD --- #}
+                <div class="neon-card gold-glow shadow-lg">
+                    <div class="card-inner p-4 p-md-5">
+                        
+                        <h2 class="h4 text-white text-center mb-4 fw-bold text-uppercase" style="letter-spacing: 2px;">
+                            Identification
+                        </h2>
+
+                        <form  method="POST">
+                            {% if error %}
+                            <div class="text-danger text-center small mb-3 fw-bold p-2" style="background: rgba(255,0,0,0.1); border: 1px solid red; border-radius: 5px;">
+                            Incorrects. Veuillez réessayer.
+                            </div>
+                            {% endif %}
+
+                            <div class="mb-3">
+                                <label class="form-label small text-uppercase fw-bold text-warning">Adresse Mail</label>
+                                <input type="email" value="{{ last_username }}" name="mail" id="inputMail" class="form-control bank-input border-warning-subtle" 
+                                placeholder="exemple@mail.com" autocomplete="email" required autofocus>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small text-uppercase fw-bold text-warning">Mot de passe</label>
+                                <input type="password" name="password" class="form-control bank-input border-warning-subtle" 
+                                    placeholder="••••••••" autocomplete= "current-password" required>
+                            </div>
+                            {# Se Souvenir de Moi #}
+                            <div class="mb-4 form-check">
+                                <input type="checkbox" name="_remember_me" id="_remember_me" class="form-check-input bg-dark border-warning">
+                                <label class="form-check-label text-white-50 small" for="_remember_me">Se souvenir de moi </label>
+                            </div>
+                            <button type="submit" class="btn-play gold w-100 py-3 mb-3">
+                                ENTRER DANS LE SALON
+                            </button>
+                            {# --- LE JETON DE SÉCURITÉ INVISIBLE --- #}
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                        </form>
+
+                        <div class="text-center">
+                            <a href="#" class="exit-btn" style="font-size: 0.75rem;">Mot de passe oublié ?</a>
+                        </div>
+                    </div>
+                </div>
+
+                {# --- LIEN VERS INSCRIPTION --- #}
+                <div class="text-center mt-4">
+                    <p class="text-white-50">Pas encore membre ? 
+                        <a href="/register" class="fw-bold text-decoration-none exit-btn" style="color: #ff8c00 !important; opacity: 1;">
+                            Rejoindre l'élite
+                        </a>
+                    </p>
+                    <a href="/home" class="exit-btn mt-2 d-inline-block">← Retour à l'accueil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Harmonisation des inputs avec le reste du site */
+    .bank-input {
+        background: #151515 !important;
+        border: none !important;
+        border-bottom: 2px solid rgba(255, 140, 0, 0.2) !important;
+        color: white !important;
+        padding: 12px 15px !important;
+        transition: 0.3s;
+    }
+    .bank-input:focus {
+        border-bottom-color: #ff8c00 !important;
+        background: #1a1a1a !important;
+        box-shadow: 0 5px 15px rgba(255, 140, 0, 0.05);
+    }
+</style>
+{% endblock %}
