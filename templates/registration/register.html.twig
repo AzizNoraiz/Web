@@ -66,6 +66,9 @@
                                 <label class="form-label small text-uppercase fw-bold text-warning">Mot de passe</label>
                                 {#<input type="password" class="form-control bank-input border-warning-subtle" placeholder="••••••••">#}
                                 {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control bank-input border-warning-subtle', 'placeholder': '••••••••'}}) }}
+                                <div class="text-danger small mt-1 fw-bold">
+                                    {{ form_errors(registrationForm.plainPassword) }}
+                                </div>
                             </div>
 
                             {# Bouton Valider #}
