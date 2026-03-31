@@ -8,13 +8,14 @@
     {# --- HEADER UTILISATEUR --- #}
     <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3" style="z-index: 1000;">
         <div class="text-end">
-            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">{{ app.user.username|default('Joueur') }}</div>
-            <div class="text-warning fw-bold fs-3">5 000 <small class="text-white-50" style="font-size: 0.5em;">JETONS</small></div>
+            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">{{ app.user.username }}</div>
+            <div class="text-warning fw-bold fs-3">{{ jetons }} <small class="text-white-50" style="font-size: 0.5em;">JETONS</small></div>
         </div>
         <a href="/depotretrait" class="btn-add-funds shadow-lg"><span>+</span></a>
     </div>
 
     <div class="container text-center">
+
         {# --- TITRE --- #}
         <div class="mb-5">
             <h1 class="display-1 fw-bold text-uppercase mb-2 text-warning main-title">Le 777</h1>
@@ -25,14 +26,45 @@
             </div>
         </div>
 
-        {# --- MACHINE À SOUS --- #}
+        {# --- MESSAGE RÉSULTAT --- #}
+        {% if aJoue is defined and aJoue %}
+            {% if lignesGagnantes|length > 0 %}
+                <div class="alert-victoire mb-4">
+                    🏆 VICTOIRE ! +{{ gain }} jetons
+                    {% if lignesGagnantes|length > 1 %}
+                        ({{ lignesGagnantes|length }} lignes gagnantes !)
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="alert-defaite mb-4">
+                    💀 Pas de chance... -{{ mise }} jetons
+                </div>
+            {% endif %}
+        {% endif %}
+
+        {# --- MACHINE À SOUS (3 colonnes x 3 lignes) --- #}
         <div class="row justify-content-center mb-5">
             <div class="col-auto">
                 <div class="neon-card gold-glow shadow-lg">
-                    <div class="card-inner d-flex gap-3 p-4">
-                        <div class="reel"><span class="reel-number">7</span></div>
-                        <div class="reel"><span class="reel-number">7</span></div>
-                        <div class="reel"><span class="reel-number">7</span></div>
+                    <div class="card-inner p-4">
+                        <div class="grille-slot">
+                            {% for ligne in 0..2 %}
+                                <div class="slot-row {% if aJoue is defined and ligne in lignesGagnantes %}row-gagnante{% endif %}">
+                                    {% for col in 0..2 %}
+                                        <div class="reel {% if aJoue is defined and ligne in lignesGagnantes %}reel-win{% endif %}">
+                                            <span class="reel-number">
+                                                {# Affiche les résultats si on a joué, sinon des "?" #}
+                                                {% if aJoue is defined and rouleaux is defined %}
+                                                    {{ rouleaux[col][ligne] }}
+                                                {% else %}
+                                                    ?
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -43,14 +75,15 @@
             <div class="col-12 col-md-5 col-lg-4">
                 <div class="bet-card-gold">
                     <div class="bet-inner p-4">
-                        <label class="form-label small text-uppercase fw-bold text-warning mb-3" style="letter-spacing: 2px;">Mise en jeu</label>
-                        <div class="input-group mb-4">
-                            <input type="number" class="form-control bet-input-gold" value="10" min="1">
-                            <span class="input-group-text bg-dark text-white-50 border-0 px-3">JETONS</span>
-                        </div>
-
-                        <button class="btn-play gold w-100 mb-3">LANCER LE TIRAGE</button>
-                        
+                        <form action="{{ path('slot_machine_jouer') }}" method="POST">
+                            <label class="form-label small text-uppercase fw-bold text-warning mb-3" style="letter-spacing: 2px;">Mise en jeu</label>
+                            <div class="input-group mb-4">
+                                <input type="number" name="mise" class="form-control bet-input-gold"
+                                       value="{{ mise is defined ? mise : 10 }}" min="1" max="{{ jetons }}">
+                                <span class="input-group-text bg-dark text-white-50 border-0 px-3">JETONS</span>
+                            </div>
+                            <button type="submit" class="btn-play gold w-100 mb-3">LANCER LE TIRAGE</button>
+                        </form>
                         <a href="/menu" class="exit-btn d-block mt-2">
                             <i class="bi bi-arrow-left me-1"></i>RETOUR AU SALON
                         </a>
@@ -58,26 +91,28 @@
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 
-{# --- MODAL STYLISÉE --- #}
+{# --- MODAL RÈGLES --- #}
 <div class="modal fade" id="rulesModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark border-warning shadow-lg">
             <div class="modal-header border-0">
-                <h5 class="modal-title text-warning fw-bold text-uppercase">Table des Gains</h5>
+                <h5 class="modal-title text-warning fw-bold text-uppercase">Règles du jeu</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center py-4 text-white">
-                <div class="d-flex justify-content-between border-bottom border-secondary p-2 text-warning">
-                    <span>7 - 7 - 7</span> <strong>JACKPOT x50</strong>
+                <p class="text-white-50 small mb-4">3 colonnes × 3 lignes. Chaque ligne peut rapporter !</p>
+                <div class="d-flex justify-content-between border-bottom border-secondary p-2">
+                    <span>3 chiffres identiques sur une ligne</span> <strong class="text-warning">Mise x2</strong>
                 </div>
                 <div class="d-flex justify-content-between border-bottom border-secondary p-2">
-                    <span>3 Identiques</span> <strong>x10</strong>
+                    <span>2 lignes gagnantes</span> <strong class="text-warning">Mise x4</strong>
                 </div>
                 <div class="d-flex justify-content-between p-2">
-                    <span>2 Identiques</span> <strong>x2</strong>
+                    <span>3 lignes gagnantes</span> <strong class="text-warning">Mise x6</strong>
                 </div>
             </div>
         </div>
@@ -85,37 +120,63 @@
 </div>
 
 <style>
-    /* Spécifique à la Slot Machine */
     .main-title { text-shadow: 0px 0px 30px rgba(255, 140, 0, 0.6); font-size: calc(2.5rem + 4vw); }
     .divider-gold { height: 1px; width: 80px; background: linear-gradient(to right, transparent, #ff8c00); }
     .divider-gold-reverse { height: 1px; width: 80px; background: linear-gradient(to left, transparent, #ff8c00); }
 
+    /* Grille slot */
+    .grille-slot { display: flex; flex-direction: column; gap: 12px; }
+    .slot-row { display: flex; gap: 12px; }
+
     .reel {
         background: linear-gradient(145deg, #1a1a1a, #000);
-        width: 100px; height: 150px; border-radius: 12px;
+        width: 90px; height: 90px; border-radius: 12px;
         display: flex; align-items: center; justify-content: center;
         border: 1px solid rgba(255, 140, 0, 0.2);
         box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        transition: 0.3s;
+    }
+    .reel-win {
+        border-color: #ffc107;
+        box-shadow: 0 0 20px rgba(255, 193, 7, 0.5), inset 0 0 10px rgba(255, 193, 7, 0.1);
+        background: linear-gradient(145deg, #1a1500, #0a0800);
+    }
+    .row-gagnante .reel-number { color: #ffc107; text-shadow: 0 0 15px rgba(255, 193, 7, 0.8); }
+
+    .reel-number { font-size: 2.5rem; font-weight: 900; color: white; }
+
+    /* Messages résultat */
+    .alert-victoire {
+        background: rgba(255, 193, 7, 0.1);
+        border: 1px solid #ffc107;
+        border-radius: 15px; padding: 16px 24px;
+        color: #ffc107; font-weight: 800; font-size: 1.4rem;
+        text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        animation: pulse-gold 1s ease-in-out infinite;
+    }
+    .alert-defaite {
+        background: rgba(255, 69, 0, 0.08);
+        border: 1px solid rgba(255, 69, 0, 0.3);
+        border-radius: 15px; padding: 14px 24px;
+        color: rgba(255, 255, 255, 0.5); font-weight: 600;
+    }
+    @keyframes pulse-gold {
+        0%, 100% { box-shadow: 0 0 10px rgba(255, 193, 7, 0.3); }
+        50% { box-shadow: 0 0 25px rgba(255, 193, 7, 0.7); }
     }
 
-    .reel-number {
-        font-size: 4.5rem; font-weight: 900; color: white;
-        text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-    }
-
+    /* Bet panel */
     .bet-card-gold {
         background: rgba(255, 140, 0, 0.05);
         border: 1px solid rgba(255, 140, 0, 0.2);
         border-radius: 20px; padding: 2px;
     }
     .bet-inner { background: #0a0a0a; border-radius: 18px; }
-
     .bet-input-gold {
         background: transparent !important; border: none !important;
         border-bottom: 2px solid #ff8c00 !important; color: #ffc107 !important;
         font-weight: bold; font-size: 1.4rem; text-align: center;
     }
-
     .btn-info-circle-gold {
         background: transparent; border: 1px solid #ff8c00; color: #ff8c00;
         width: 40px; height: 40px; border-radius: 50%; transition: 0.3s;
