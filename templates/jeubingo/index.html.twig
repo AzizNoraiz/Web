@@ -43,7 +43,7 @@
                 <div class="neon-card blue-glow">
                     <div class="card-inner p-4">
                         <div class="row align-items-center">
-                            <div class="col-md-4 border-end border-secondary border-opacity-25">
+                            <div class="col-md-4 border-end border-secondary border-opacity-25 mb-4 mb-md-0">
                                 <label class="form-label small text-uppercase fw-bold text-info mb-3">Mise</label>
                                 <input type="number" id="bet-input" class="form-control bet-input-blue mb-4" value="10" min="1">
                                 <p class="text-white-50 small">Sélectionnez <span id="counter" class="text-info fw-bold">0 / 3</span> numéros.</p>
@@ -52,6 +52,7 @@
                             <div class="col-md-8 pt-3 pt-md-0">
                                 <div class="bingo-grid">
                                     {% for n in 1..10 %}
+                                    {# ATTENTION ICI: L'attribut value="{{ n }}" est crucial pour le JavaScript #}
                                     <input type="checkbox" class="btn-check bingo-checkbox" id="num-{{ n }}" value="{{ n }}" autocomplete="off">
                                     <label class="btn btn-bingo-num" for="num-{{ n }}">{{ n }}</label>
                                     {% endfor %}
@@ -59,7 +60,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                        <div class="mt-4 pt-4 border-top border-secondary border-opacity-25">
                             <button id="btn-play" class="btn-play blue w-100 mb-3" disabled>
                                 <i class="bi bi-cpu-fill me-2"></i> LANCER LE TIRAGE
                             </button>
@@ -96,15 +97,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const counterDisplay = document.getElementById('counter');
     const betInput = document.getElementById('bet-input');
 
-    // 1. Limiter la sélection à 3 numéros
+    // 1. Limiter la sélection à 3 numéros STRICTEMENT
     checkboxes.forEach(box => {
-        box.addEventListener('change', () => {
-            const checked = document.querySelectorAll('.bingo-checkbox:checked');
-            counterDisplay.innerText = `${checked.length} / 3`;
+        box.addEventListener('change', function() {
+            let checkedBoxes = document.querySelectorAll('.bingo-checkbox:checked');
             
-            if (checked.length === 3) {
+            // Si on essaie de cocher un 4ème numéro, on annule l'action immédiatement
+            if (checkedBoxes.length > 3) {
+                this.checked = false; 
+                checkedBoxes = document.querySelectorAll('.bingo-checkbox:checked');
+            }
+
+            counterDisplay.innerText = `${checkedBoxes.length} / 3`;
+            
+            // Si 3 numéros sont cochés, on active le bouton et on bloque les autres cases
+            if (checkedBoxes.length === 3) {
                 btnPlay.disabled = false;
-                checkboxes.forEach(b => { if(!b.checked) b.disabled = true; });
+                checkboxes.forEach(b => { 
+                    if (!b.checked) b.disabled = true; 
+                });
             } else {
                 btnPlay.disabled = true;
                 checkboxes.forEach(b => b.disabled = false);
@@ -115,10 +126,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Logique de jeu (Fetch)
     btnPlay.addEventListener('click', async () => {
         const selected = Array.from(document.querySelectorAll('.bingo-checkbox:checked')).map(cb => parseInt(cb.value));
-        const mise = betInput.value;
+        const mise = parseInt(betInput.value);
+
+        if (isNaN(mise) || mise <= 0) return alert("Veuillez entrer une mise valide.");
 
         btnPlay.disabled = true;
-        // Reset des boules
+        // Reset visuel des boules
         for(let i=0; i<5; i++) document.getElementById(`ball-${i}`).innerText = "?";
 
         try {
@@ -129,30 +142,40 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             const data = await response.json();
-            if (data.error) return alert(data.error);
+            if (data.error) {
+                alert(data.error);
+                btnPlay.disabled = false;
+                return;
+            }
 
             // Animation du tirage
             for (let i = 0; i < data.tirage.length; i++) {
-                await new Promise(r => setTimeout(r, 600)); // Pause entre chaque boule
+                await new Promise(r => setTimeout(r, 600)); // Pause de 0.6s entre chaque boule
                 const ballEl = document.getElementById(`ball-${i}`);
                 ballEl.innerText = data.tirage[i];
                 ballEl.style.transform = "scale(1.2)";
-                setTimeout(() => ballEl.style.transform = "scale(1)", 200);
+                ballEl.style.color = "#fff";
+                setTimeout(() => {
+                    ballEl.style.transform = "scale(1)";
+                    ballEl.style.color = "#0dcaf0";
+                }, 200);
             }
 
             // Résultat final
             setTimeout(() => {
                 document.getElementById('user-jetons').innerText = data.nouveauSolde;
                 if(data.gain > 0) {
-                    alert(`Félicitations ! Vous gagnez ${data.gain} jetons (${data.nbMatches} match(es) !)`);
+                    let message = data.nbMatches === 1 ? "Remboursé ! " : "Félicitations ! ";
+                    alert(`${message}Vous gagnez ${data.gain} jetons (${data.nbMatches} match(es) !)`);
                 } else {
-                    alert("Perdu ! Retentez votre chance.");
+                    alert("Perdu ! Aucun numéro ne correspond. Retentez votre chance.");
                 }
                 btnPlay.disabled = false;
-            }, 500);
+            }, 600);
 
         } catch (e) {
             console.error(e);
+            alert("Erreur de communication avec le serveur.");
             btnPlay.disabled = false;
         }
     });
@@ -160,8 +183,95 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <style>
-    /* ... Tes styles précédents ... */
-    .ball-inner { transition: transform 0.2s ease; }
-    .btn-play:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+    /* CSS pour la Direction Artistique "Néon/Casino" */
+    .divider-blue { height: 1px; width: 80px; background: linear-gradient(to right, transparent, #0dcaf0); }
+    .divider-blue-reverse { height: 1px; width: 80px; background: linear-gradient(to left, transparent, #0dcaf0); }
+
+    /* Zone des boules */
+    .bingo-ball-placeholder {
+        width: 70px; height: 70px;
+        background: rgba(13, 202, 240, 0.05);
+        border: 2px dashed rgba(13, 202, 240, 0.4);
+        border-radius: 50%; padding: 5px;
+    }
+    .ball-inner {
+        width: 100%; height: 100%; 
+        background: #0a0a0a; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        color: #0dcaf0; font-weight: 900; font-size: 1.5rem;
+        box-shadow: inset 0 0 15px rgba(13, 202, 240, 0.2);
+        transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    /* Carte de jeu (Néon) */
+    .neon-card.blue-glow {
+        background: rgba(13, 202, 240, 0.05);
+        border: 1px solid rgba(13, 202, 240, 0.2);
+        border-radius: 20px; padding: 2px;
+        box-shadow: 0 0 20px rgba(13, 202, 240, 0.1);
+    }
+    .card-inner { background: #0a0a0a; border-radius: 18px; }
+
+    /* Input Mise */
+    .bet-input-blue {
+        background: transparent !important; border: none !important;
+        border-bottom: 2px solid #0dcaf0 !important; color: white !important;
+        text-align: center; font-weight: bold; font-size: 1.5rem;
+    }
+    .bet-input-blue:focus { box-shadow: none; border-color: #fff !important; }
+
+    /* Grille de sélection */
+    .bingo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .btn-bingo-num {
+        height: 55px; background: #1a1a1a; 
+        border: 1px solid rgba(255,255,255,0.1);
+        color: white; font-weight: bold; font-size: 1.2rem;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.3s; border-radius: 12px; cursor: pointer;
+    }
+    .btn-bingo-num:hover { border-color: #0dcaf0; color: #0dcaf0; }
+    
+    /* Bouton checké (sélectionné) */
+    .btn-check:checked + .btn-bingo-num {
+        background: #0dcaf0; color: #000; font-weight: 900;
+        box-shadow: 0 0 15px #0dcaf0; border-color: #fff;
+    }
+    /* Bouton désactivé (quand 3 sont choisis) */
+    .btn-check:disabled + .btn-bingo-num {
+        opacity: 0.4; cursor: not-allowed;
+    }
+    /* Garder l'opacité pleine pour ceux déjà cochés même si disabled */
+    .btn-check:checked:disabled + .btn-bingo-num {
+        opacity: 1; 
+    }
+
+    /* Boutons d'action */
+    .btn-play.blue {
+        background: transparent; color: #0dcaf0;
+        border: 2px solid #0dcaf0; border-radius: 50px;
+        padding: 15px; font-weight: 900; letter-spacing: 2px;
+        transition: 0.3s;
+    }
+    .btn-play.blue:hover:not(:disabled) {
+        background: #0dcaf0; color: black;
+        box-shadow: 0 0 20px #0dcaf0;
+    }
+    .btn-play:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); border-color: gray; color: gray;}
+
+    .btn-info-circle-blue {
+        background: transparent; border: 1px solid #0dcaf0; color: #0dcaf0;
+        width: 40px; height: 40px; border-radius: 50%; transition: 0.3s;
+    }
+    .btn-info-circle-blue:hover { background: #0dcaf0; color: black; box-shadow: 0 0 15px #0dcaf0; }
+
+    .exit-btn { color: #6c757d; text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
+    .exit-btn:hover { color: white; text-decoration: underline; }
+    
+    .btn-add-funds {
+        background: #ffc107; color: black; width: 45px; height: 45px;
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        text-decoration: none; font-size: 1.5rem; font-weight: bold; transition: 0.3s;
+    }
+    .btn-add-funds:hover { transform: scale(1.1); background: white; }
 </style>
 {% endblock %}

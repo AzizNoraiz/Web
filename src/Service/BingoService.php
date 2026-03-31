@@ -7,7 +7,6 @@ class BingoService
     public function jouer(array $choixJoueur, int $mise): array
     {
         // 1. Tirage de 5 boules uniques entre 1 et 10
-        $tirage = [];
         $nombresPossibles = range(1, 10);
         shuffle($nombresPossibles);
         $tirage = array_slice($nombresPossibles, 0, 5);
@@ -23,7 +22,7 @@ class BingoService
         } elseif ($nombreDeMatches === 2) {
             $gain = $mise * 5;
         } elseif ($nombreDeMatches === 1) {
-            $gain = $mise; // Remboursé
+            $gain = $mise; // Remboursé (x1)
         }
 
         return [
