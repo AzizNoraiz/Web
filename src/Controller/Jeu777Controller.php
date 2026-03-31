@@ -14,7 +14,7 @@ final class Jeu777Controller extends AbstractController
     #[Route('/jeu777', name: 'app_jeu777', methods: ['GET'])]
     public function index(): Response
     {
-        /** @var User $user */
+        /** @var Personne $user */
         $user = $this->getUser();
 
         return $this->render('jeu777/index.html.twig', [
@@ -25,7 +25,7 @@ final class Jeu777Controller extends AbstractController
     #[Route('/jeu777/jouer', name: 'app_jeu777_jouer', methods: ['POST'])]
     public function jouer(Request $request, EntityManagerInterface $em): Response
     {
-        /** @var User $user */
+        /** @var Personne $user */
         $user = $this->getUser();
         $mise = (int) $request->request->get('mise', 10);
 
