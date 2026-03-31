@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             counterDisplay.innerText = `${checkedBoxes.length} / 3`;
             
-            // Si 3 numéros sont cochés,fyufyi on active le bouton et on bloque les autres cases
+            // Si 3 numéros sont cochés, on active le bouton et on bloque les autres cases
             if (checkedBoxes.length === 3) {
                 btnPlay.disabled = false;
                 checkboxes.forEach(b => { 
