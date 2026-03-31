@@ -50,7 +50,7 @@ class Personne implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->$jetons = 5000;
+        $this->jetons = 5000;
     }
 
     public function getId(): ?int
