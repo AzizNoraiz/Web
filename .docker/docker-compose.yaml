@@ -74,7 +74,13 @@ services:
       - "1025:1025"
     networks:
       - casino_network
-
+  chatbot:
+    build: 
+      context: ./chatbot
+    container_name: casino_chatbot
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
 volumes:
   casino_db_data:
 

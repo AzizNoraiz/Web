@@ -1,0 +1,23 @@
+[
+    {
+        "Nom du jeu": "Jackpot (777)",
+        "Type": "Machine à sous",
+        "Mise minimum": "1 jeton",
+        "Règles": "Le joueur lance la machine à sous virtuelle. Trois rouleaux tournent puis s'arrêtent. L'objectif est d'aligner trois symboles identiques. Si trois symboles '7' s'alignent, c'est le grand Jackpot !",
+        "Gains": "Varie selon les symboles. L'alignement 7-7-7 offre le multiplicateur maximum de x100."
+    },
+    {
+        "Nom du jeu": "Pile ou Face",
+        "Type": "Jeu de tirage rapide",
+        "Mise minimum": "1 jeton",
+        "Règles": "Le joueur choisit 'Pile' ou 'Face' puis place sa mise. Une pièce virtuelle est lancée. Si la pièce tombe sur le choix du joueur, c'est gagné. Sinon, la mise est perdue.",
+        "Gains": "Quitte ou double. Une victoire rapporte exactement 2 fois la mise initiale (x2)."
+    },
+    {
+        "Nom du jeu": "Bingo Royal",
+        "Type": "Loterie",
+        "Mise minimum": "5 jetons la grille",
+        "Règles": "Le joueur achète une grille contenant des numéros aléatoires. Le croupier tire des boules numérotées au sort. Si le numéro tiré est sur la grille, il est coché. Le but est d'être le premier à compléter une ligne entière ou la grille complète.",
+        "Gains": "Répartition de la cagnotte totale entre les gagnants selon qu'ils ont une ligne (gain mineur) ou un carton plein (gain majeur)."
+    }
+]

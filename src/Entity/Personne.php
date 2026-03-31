@@ -45,6 +45,14 @@ class Personne implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $telephone = null;
 
+    #[ORM\Column(type: 'integer', options: ['default' => 5000])]
+    private ?int $jetons = 5000;
+
+    public function __construct()
+    {
+        $this->$jetons = 5000;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -164,6 +172,18 @@ class Personne implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTelephone(string $telephone): static
     {
         $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function getJetons(): ?int
+    {
+        return $this->jetons;
+    }
+
+    public function setJetons(int $jetons): static
+    {
+        $this->jetons = $jetons;
 
         return $this;
     }
