@@ -8,8 +8,8 @@
     {# --- HEADER UTILISATEUR --- #}
     <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3" style="z-index: 1000;">
         <div class="text-end">
-            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">{{ app.user.username|default('Joueur') }}</div>
-            <div class="text-warning fw-bold fs-3">5 000 <small class="text-white-50" style="font-size: 0.5em;">JETONS</small></div>
+            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">{{ app.user.pseudo|default('Joueur') }}</div>
+            <div class="text-warning fw-bold fs-3"><span id="user-jetons">{{ app.user.jetons|default(0) }}</span> <small class="text-white-50" style="font-size: 0.5em;">JETONS</small></div>
         </div>
         <a href="/depotretrait" class="btn-add-funds shadow-lg"><span>+</span></a>
     </div>
@@ -17,9 +17,7 @@
     <div class="container text-center">
         {# --- TITRE --- #}
         <div class="mb-5">
-            <h1 class="display-1 fw-bold text-uppercase mb-2 text-info" style="text-shadow: 0px 0px 30px rgba(13, 202, 240, 0.6);">
-                Bingo Royal
-            </h1>
+            <h1 class="display-1 fw-bold text-uppercase mb-2 text-info" style="text-shadow: 0px 0px 30px rgba(13, 202, 240, 0.6);">Bingo Royal</h1>
             <div class="d-flex justify-content-center align-items-center gap-3">
                 <div class="divider-blue"></div>
                 <button class="btn-info-circle-blue" data-bs-toggle="modal" data-bs-target="#rulesModal">?</button>
@@ -30,10 +28,10 @@
         {# --- ZONE DES BOULES --- #}
         <div class="mb-5">
             <p class="text-white-50 text-uppercase small mb-4" style="letter-spacing: 4px;">Tirage de la Cour</p>
-            <div class="d-flex justify-content-center flex-wrap gap-3">
-                {% for i in 1..5 %}
+            <div class="d-flex justify-content-center flex-wrap gap-3" id="balls-container">
+                {% for i in 0..4 %}
                 <div class="bingo-ball-placeholder">
-                    <div class="ball-inner shadow-text">?</div>
+                    <div class="ball-inner shadow-text" id="ball-{{ i }}">?</div>
                 </div>
                 {% endfor %}
             </div>
@@ -45,18 +43,16 @@
                 <div class="neon-card blue-glow">
                     <div class="card-inner p-4">
                         <div class="row align-items-center">
-                            {# Panneau gauche : Mise #}
                             <div class="col-md-4 border-end border-secondary border-opacity-25">
                                 <label class="form-label small text-uppercase fw-bold text-info mb-3">Mise</label>
-                                <input type="number" class="form-control bet-input-blue mb-4" value="10" min="1">
-                                <p class="text-white-50 small">Sélectionnez <span class="text-info fw-bold">3 numéros</span>.</p>
+                                <input type="number" id="bet-input" class="form-control bet-input-blue mb-4" value="10" min="1">
+                                <p class="text-white-50 small">Sélectionnez <span id="counter" class="text-info fw-bold">0 / 3</span> numéros.</p>
                             </div>
 
-                            {# Panneau droit : Grille #}
                             <div class="col-md-8 pt-3 pt-md-0">
                                 <div class="bingo-grid">
                                     {% for n in 1..10 %}
-                                    <input type="checkbox" class="btn-check" id="num-{{ n }}" autocomplete="off">
+                                    <input type="checkbox" class="btn-check bingo-checkbox" id="num-{{ n }}" value="{{ n }}" autocomplete="off">
                                     <label class="btn btn-bingo-num" for="num-{{ n }}">{{ n }}</label>
                                     {% endfor %}
                                 </div>
@@ -64,7 +60,7 @@
                         </div>
 
                         <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
-                            <button class="btn-play blue w-100 mb-3">
+                            <button id="btn-play" class="btn-play blue w-100 mb-3" disabled>
                                 <i class="bi bi-cpu-fill me-2"></i> LANCER LE TIRAGE
                             </button>
                             <a href="/menu" class="exit-btn d-block mt-2">QUITTER LE BINGO</a>
@@ -93,46 +89,79 @@
     </div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const checkboxes = document.querySelectorAll('.bingo-checkbox');
+    const btnPlay = document.getElementById('btn-play');
+    const counterDisplay = document.getElementById('counter');
+    const betInput = document.getElementById('bet-input');
+
+    // 1. Limiter la sélection à 3 numéros
+    checkboxes.forEach(box => {
+        box.addEventListener('change', () => {
+            const checked = document.querySelectorAll('.bingo-checkbox:checked');
+            counterDisplay.innerText = `${checked.length} / 3`;
+            
+            if (checked.length === 3) {
+                btnPlay.disabled = false;
+                checkboxes.forEach(b => { if(!b.checked) b.disabled = true; });
+            } else {
+                btnPlay.disabled = true;
+                checkboxes.forEach(b => b.disabled = false);
+            }
+        });
+    });
+
+    // 2. Logique de jeu (Fetch)
+    btnPlay.addEventListener('click', async () => {
+        const selected = Array.from(document.querySelectorAll('.bingo-checkbox:checked')).map(cb => parseInt(cb.value));
+        const mise = betInput.value;
+
+        btnPlay.disabled = true;
+        // Reset des boules
+        for(let i=0; i<5; i++) document.getElementById(`ball-${i}`).innerText = "?";
+
+        try {
+            const response = await fetch('{{ path('app_bingo_play') }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ choix: selected, mise: mise })
+            });
+            
+            const data = await response.json();
+            if (data.error) return alert(data.error);
+
+            // Animation du tirage
+            for (let i = 0; i < data.tirage.length; i++) {
+                await new Promise(r => setTimeout(r, 600)); // Pause entre chaque boule
+                const ballEl = document.getElementById(`ball-${i}`);
+                ballEl.innerText = data.tirage[i];
+                ballEl.style.transform = "scale(1.2)";
+                setTimeout(() => ballEl.style.transform = "scale(1)", 200);
+            }
+
+            // Résultat final
+            setTimeout(() => {
+                document.getElementById('user-jetons').innerText = data.nouveauSolde;
+                if(data.gain > 0) {
+                    alert(`Félicitations ! Vous gagnez ${data.gain} jetons (${data.nbMatches} match(es) !)`);
+                } else {
+                    alert("Perdu ! Retentez votre chance.");
+                }
+                btnPlay.disabled = false;
+            }, 500);
+
+        } catch (e) {
+            console.error(e);
+            btnPlay.disabled = false;
+        }
+    });
+});
+</script>
+
 <style>
-    /* Spécifique au Bingo */
-    .divider-blue { height: 1px; width: 80px; background: linear-gradient(to right, transparent, #0dcaf0); }
-    .divider-blue-reverse { height: 1px; width: 80px; background: linear-gradient(to left, transparent, #0dcaf0); }
-
-    .bingo-ball-placeholder {
-        width: 65px; height: 65px;
-        background: rgba(13, 202, 240, 0.05);
-        border: 2px dashed rgba(13, 202, 240, 0.4);
-        border-radius: 50%; padding: 5px;
-    }
-    .ball-inner {
-        width: 100%; height: 100%; background: #0a0a0a; border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        color: #0dcaf0; font-weight: 900; font-size: 1.4rem;
-        box-shadow: inset 0 0 15px rgba(13, 202, 240, 0.2);
-    }
-
-    .bingo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-    .btn-bingo-num {
-        height: 50px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1);
-        color: white; font-weight: bold; display: flex; align-items: center; justify-content: center;
-        transition: 0.3s; border-radius: 10px;
-    }
-    .btn-bingo-num:hover { color: #0dcaf0; border-color: #0dcaf0; }
-    .btn-check:checked + .btn-bingo-num {
-        background: #0dcaf0; color: #000; font-weight: 900;
-        box-shadow: 0 0 15px #0dcaf0; border-color: #fff;
-    }
-
-    .bet-input-blue {
-        background: transparent !important; border: none !important;
-        border-bottom: 2px solid #0dcaf0 !important; color: white !important;
-        text-align: center; font-weight: bold; font-size: 1.3rem;
-    }
-
-    .btn-info-circle-blue {
-        background: transparent; border: 1px solid #0dcaf0; color: #0dcaf0;
-        width: 40px; height: 40px; border-radius: 50%; transition: 0.3s;
-    }
-    .btn-info-circle-blue:hover { background: #0dcaf0; color: black; }
+    /* ... Tes styles précédents ... */
+    .ball-inner { transition: transform 0.2s ease; }
+    .btn-play:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 </style>
 {% endblock %}

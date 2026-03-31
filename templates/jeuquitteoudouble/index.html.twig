@@ -5,21 +5,18 @@
 {% block body %}
 <div class="bg-casino min-vh-100 py-5 d-flex align-items-center" style="background: radial-gradient(circle, #1a0505 0%, #000000 100%);">
 
-    {# --- TOP BAR (Héritée du style base) --- #}
+    {# --- HEADER --- #}
     <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3" style="z-index: 1000;">
         <div class="text-end">
-            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">{{ app.user.username|default('Joueur') }}</div>
-            <div class="text-warning fw-bold fs-3">5 000 <small class="text-white-50" style="font-size: 0.5em;">JETONS</small></div>
+            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">{{ app.user.pseudo|default('Joueur') }}</div>
+            <div class="text-warning fw-bold fs-3"><span id="user-jetons">{{ app.user.jetons|default(0) }}</span> <small class="text-white-50" style="font-size: 0.5em;">JETONS</small></div>
         </div>
         <a href="/depotretrait" class="btn-add-funds shadow-lg"><span>+</span></a>
     </div>
 
     <div class="container text-center">
-        {# --- TITRE --- #}
         <div class="mb-5">
-            <h1 class="display-1 fw-bold text-uppercase mb-2 text-danger" style="text-shadow: 0px 0px 30px rgba(255, 0, 0, 0.6);">
-                Quitte ou Double
-            </h1>
+            <h1 class="display-1 fw-bold text-uppercase mb-2 text-danger" style="text-shadow: 0px 0px 30px rgba(255, 0, 0, 0.6);">Quitte ou Double</h1>
             <div class="d-flex justify-content-center align-items-center gap-3">
                 <div class="divider-red"></div>
                 <button class="btn-info-circle-red" data-bs-toggle="modal" data-bs-target="#rulesModal">?</button>
@@ -27,7 +24,7 @@
             </div>
         </div>
 
-        {# --- ZONE DE TIRAGE (Cercle Néon) --- #}
+        {# --- ZONE TIRAGE --- #}
         <div class="row justify-content-center mb-5">
             <div class="col-auto">
                 <div class="coin-container red-glow shadow-lg">
@@ -38,13 +35,12 @@
             </div>
         </div>
 
-        {# --- INTERFACE DE JEU --- #}
+        {# --- INTERFACE --- #}
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 col-lg-5">
                 <div class="neon-card red-glow">
                     <div class="card-inner p-4">
-                        <label class="form-label small text-uppercase fw-bold text-danger mb-3" style="letter-spacing: 2px;">Votre Pari</label>
-                        
+                        <label class="form-label small text-uppercase fw-bold text-danger mb-3">Votre Pari</label>
                         <div class="d-flex gap-2 mb-4">
                             <input type="radio" class="btn-check" name="betType" id="pair" autocomplete="off">
                             <label class="btn btn-outline-pari flex-fill" for="pair">PAIR</label>
@@ -58,11 +54,10 @@
 
                         <div class="input-group mb-4 px-3">
                             <span class="input-group-text bg-transparent border-0 text-white-50">MISE:</span>
-                            <input type="number" class="form-control bet-input-red" value="10" min="1">
+                            <input type="number" id="bet-input" class="form-control bet-input-red" value="10" min="1">
                         </div>
 
-                        <button class="btn-play red w-100 mb-3">TENTER LE DESTIN</button>
-                        
+                        <button id="btn-play" class="btn-play red w-100 mb-3">TENTER LE DESTIN</button>
                         <a href="/menu" class="exit-btn d-block mt-2">QUITTER LA TABLE</a>
                     </div>
                 </div>
@@ -71,60 +66,60 @@
     </div>
 </div>
 
-{# --- MODAL RÈGLES --- #}
-<div class="modal fade" id="rulesModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark border-danger">
-            <div class="modal-header border-0">
-                <h5 class="modal-title text-danger fw-bold text-uppercase">Règles de la Table</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center py-4 text-white">
-                <p>Le destin s'arrête sur un nombre entre <span class="text-danger fw-bold">0 et 36</span>.</p>
-                <div class="d-flex justify-content-between border-bottom border-secondary p-2"><span>Pair / Impair</span> <strong>x2</strong></div>
-                <div class="d-flex justify-content-between p-2 text-warning"><span>Le Zéro (Jackpot)</span> <strong>x35</strong></div>
-            </div>
-        </div>
-    </div>
-</div>
+{# MODAL RÈGLES (Omis ici pour la brièveté, garde le tien) #}
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const btnPlay = document.getElementById('btn-play');
+    const drawDisplay = document.getElementById('drawNumber');
+    const jetonsDisplay = document.getElementById('user-jetons');
+
+    btnPlay.addEventListener('click', async () => {
+        const selectedRadio = document.querySelector('input[name="betType"]:checked');
+        const mise = document.getElementById('bet-input').value;
+
+        if (!selectedRadio) return alert("Choisissez : PAIR, ZÉRO ou IMPAIR !");
+        
+        btnPlay.disabled = true;
+        drawDisplay.classList.add('text-muted');
+
+        try {
+            const response = await fetch('{{ path('app_qod_play') }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ typePari: selectedRadio.id, mise: mise })
+            });
+
+            const data = await response.json();
+            if (data.error) throw new Error(data.error);
+
+            // Animation de suspense
+            let count = 0;
+            const anim = setInterval(() => {
+                drawDisplay.innerText = Math.floor(Math.random() * 37);
+                if (++count > 20) {
+                    clearInterval(anim);
+                    drawDisplay.innerText = data.tirage;
+                    drawDisplay.classList.remove('text-muted');
+                    
+                    jetonsDisplay.innerText = data.nouveauSolde;
+                    btnPlay.disabled = false;
+                    
+                    if (data.gain > 0) alert("GAGNÉ ! +" + data.gain);
+                }
+            }, 50);
+
+        } catch (e) {
+            alert(e.message);
+            btnPlay.disabled = false;
+        }
+    });
+});
+</script>
 
 <style>
-    /* Spécifique au Quitte ou Double */
-    .divider-red { height: 1px; width: 100px; background: linear-gradient(to right, transparent, #ff4500); }
-    .divider-red-reverse { height: 1px; width: 100px; background: linear-gradient(to left, transparent, #ff4500); }
-    
-    .coin-container {
-        position: relative; width: 180px; height: 180px;
-        background: rgba(0, 0, 0, 0.8); border-radius: 50%;
-        padding: 4px; overflow: hidden;
-    }
-    .coin-container::before {
-        content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-        animation: rotate-neon 3s linear infinite;
-        background: conic-gradient(#ff0000, transparent, #ff4500, transparent, #ff0000);
-    }
-    .coin-inner {
-        position: relative; width: 100%; height: 100%;
-        background: #0a0a0a; border-radius: 50%; z-index: 2;
-        box-shadow: inset 0 0 30px rgba(255, 0, 0, 0.2);
-    }
-
-    .btn-outline-pari { border: 1px solid rgba(255, 255, 255, 0.2); color: white; border-radius: 50px; font-weight: bold; }
-    .btn-check:checked + .btn-outline-pari { background: white; color: black; box-shadow: 0 0 15px white; }
-
-    .btn-outline-zero { border: 1px solid #ff8c00; color: #ff8c00; border-radius: 50px; font-weight: bold; }
-    .btn-check:checked + .btn-outline-zero { background: #ff8c00; color: black; box-shadow: 0 0 20px #ff8c00; }
-
-    .bet-input-red {
-        background: transparent !important; border: none !important;
-        border-bottom: 2px solid #ff4500 !important; color: white !important;
-        font-size: 1.5rem; font-weight: bold; text-align: center;
-    }
-
-    .btn-info-circle-red {
-        background: transparent; border: 1px solid #ff4500; color: #ff4500;
-        width: 40px; height: 40px; border-radius: 50%; transition: 0.3s;
-    }
-    .btn-info-circle-red:hover { background: #ff4500; color: white; }
+    /* Garde tes styles CSS ici, ils sont parfaits */
+    .text-muted { opacity: 0.5; filter: blur(2px); }
+    @keyframes rotate-neon { 100% { transform: rotate(360deg); } }
 </style>
 {% endblock %}
