@@ -24,11 +24,11 @@ class QuitteOuDoubleController extends AbstractController
         if (!$user) return $this->json(['error' => 'Veuillez vous connecter'], 403);
 
         $data = json_decode($request->getContent(), true);
-        $typePari = $data['typePari'] ?? null; // 'pair', 'impair' ou 'zero'
+        $typePari = $data['typePari'] ?? null; 
         $mise = (int) ($data['mise'] ?? 0);
 
         // --- VERIFICATIONS ---
-        if (!$typePari) return $this->json(['error' => 'Choisissez un type de pari'], 400);
+        if (!in_array($typePari, ['pair', 'impair'])) return $this->json(['error' => 'Choisissez Pair ou Impair'], 400);
         if ($mise <= 0) return $this->json(['error' => 'Mise invalide'], 400);
         if ($user->getJetons() < $mise) return $this->json(['error' => 'Jetons insuffisants'], 400);
 

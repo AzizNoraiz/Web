@@ -41,20 +41,22 @@
                 <div class="neon-card red-glow">
                     <div class="card-inner p-4">
                         <label class="form-label small text-uppercase fw-bold text-danger mb-3">Votre Pari</label>
-                        <div class="d-flex gap-2 mb-4">
+                        <div class="d-flex gap-3 mb-4">
                             <input type="radio" class="btn-check" name="betType" id="pair" autocomplete="off">
-                            <label class="btn btn-outline-pari flex-fill" for="pair">PAIR</label>
-
-                            <input type="radio" class="btn-check" name="betType" id="zero" autocomplete="off">
-                            <label class="btn btn-outline-zero flex-fill" for="zero">ZÉRO</label>
+                            <label class="btn btn-outline-pari flex-fill py-2" for="pair">PAIR</label>
 
                             <input type="radio" class="btn-check" name="betType" id="impair" autocomplete="off">
-                            <label class="btn btn-outline-pari flex-fill" for="impair">IMPAIR</label>
+                            <label class="btn btn-outline-pari flex-fill py-2" for="impair">IMPAIR</label>
                         </div>
 
                         <div class="input-group mb-4 px-3">
                             <span class="input-group-text bg-transparent border-0 text-white-50">MISE:</span>
                             <input type="number" id="bet-input" class="form-control bet-input-red" value="10" min="1">
+                        </div>
+
+                        {# BOÎTE DE RÉSULTAT INTÉGRÉE #}
+                        <div id="result-box" class="mb-4 p-3 rounded d-none transition-all">
+                            <h5 id="result-message" class="mb-0 fw-bold text-uppercase" style="letter-spacing: 1px;"></h5>
                         </div>
 
                         <button id="btn-play" class="btn-play red w-100 mb-3">TENTER LE DESTIN</button>
@@ -66,21 +68,51 @@
     </div>
 </div>
 
-{# MODAL RÈGLES (Omis ici pour la brièveté, garde le tien) #}
+{# MODAL RÈGLES #}
+<div class="modal fade" id="rulesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border-danger shadow-lg">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-danger fw-bold text-uppercase">Règles de la Table</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center py-4 text-white">
+                <p class="text-white-50 small">La machine tire un nombre au hasard entre 1 et 100.</p>
+                <div class="d-flex justify-content-between border-bottom border-secondary p-2">
+                    <span>Bon pronostic (Pair ou Impair)</span> <strong class="text-success">x2</strong>
+                </div>
+                <div class="d-flex justify-content-between p-2">
+                    <span>Mauvais pronostic</span> <strong class="text-danger">Perdu</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const btnPlay = document.getElementById('btn-play');
     const drawDisplay = document.getElementById('drawNumber');
     const jetonsDisplay = document.getElementById('user-jetons');
+    const resultBox = document.getElementById('result-box');
+    const resultMessage = document.getElementById('result-message');
+    const betInput = document.getElementById('bet-input');
 
     btnPlay.addEventListener('click', async () => {
         const selectedRadio = document.querySelector('input[name="betType"]:checked');
-        const mise = document.getElementById('bet-input').value;
+        const mise = parseInt(betInput.value);
 
-        if (!selectedRadio) return alert("Choisissez : PAIR, ZÉRO ou IMPAIR !");
+        if (!selectedRadio) {
+            showResult("Choisissez PAIR ou IMPAIR", false);
+            return;
+        }
+        if (isNaN(mise) || mise <= 0) {
+            showResult("Mise invalide", false);
+            return;
+        }
         
         btnPlay.disabled = true;
+        resultBox.classList.add('d-none');
         drawDisplay.classList.add('text-muted');
 
         try {
@@ -91,35 +123,131 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const data = await response.json();
-            if (data.error) throw new Error(data.error);
+            if (data.error) {
+                showResult(data.error, false);
+                btnPlay.disabled = false;
+                drawDisplay.classList.remove('text-muted');
+                return;
+            }
 
             // Animation de suspense
             let count = 0;
             const anim = setInterval(() => {
-                drawDisplay.innerText = Math.floor(Math.random() * 37);
+                drawDisplay.innerText = Math.floor(Math.random() * 100) + 1; // Animation 1-100
                 if (++count > 20) {
                     clearInterval(anim);
+                    
+                    // Affichage du vrai résultat
                     drawDisplay.innerText = data.tirage;
                     drawDisplay.classList.remove('text-muted');
                     
-                    jetonsDisplay.innerText = data.nouveauSolde;
-                    btnPlay.disabled = false;
-                    
-                    if (data.gain > 0) alert("GAGNÉ ! +" + data.gain);
+                    setTimeout(() => {
+                        jetonsDisplay.innerText = data.nouveauSolde;
+                        btnPlay.disabled = false;
+                        
+                        // Affichage dans la boîte
+                        if (data.gain > 0) {
+                            showResult(`✨ GAGNÉ ! + ${data.gain} JETONS ✨`, true);
+                        } else {
+                            const parite = data.tirage % 2 === 0 ? "Pair" : "Impair";
+                            showResult(`Perdu... Le nombre était ${parite}.`, false);
+                        }
+                    }, 300); // Petit délai après l'arrêt du compteur
                 }
             }, 50);
 
         } catch (e) {
-            alert(e.message);
+            console.error(e);
+            showResult("Erreur de communication", false);
             btnPlay.disabled = false;
         }
     });
+
+    // Fonction pour gérer la boîte d'affichage
+    function showResult(message, isWin) {
+        resultBox.classList.remove('d-none', 'win-glow', 'lose-glow', 'text-success', 'text-danger');
+        resultMessage.innerText = message;
+        
+        if (isWin) {
+            resultBox.classList.add('win-glow', 'text-success');
+        } else {
+            resultBox.classList.add('lose-glow', 'text-danger');
+        }
+    }
 });
 </script>
 
 <style>
-    /* Garde tes styles CSS ici, ils sont parfaits */
-    .text-muted { opacity: 0.5; filter: blur(2px); }
+    /* Design Quitte ou Double */
+    .divider-red { height: 1px; width: 100px; background: linear-gradient(to right, transparent, #ff4500); }
+    .divider-red-reverse { height: 1px; width: 100px; background: linear-gradient(to left, transparent, #ff4500); }
+    
+    .coin-container {
+        position: relative; width: 180px; height: 180px;
+        background: rgba(0, 0, 0, 0.8); border-radius: 50%;
+        padding: 4px; overflow: hidden;
+    }
+    .coin-container::before {
+        content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+        animation: rotate-neon 3s linear infinite;
+        background: conic-gradient(#ff0000, transparent, #ff4500, transparent, #ff0000);
+    }
+    .coin-inner {
+        position: relative; width: 100%; height: 100%;
+        background: #0a0a0a; border-radius: 50%; z-index: 2;
+        box-shadow: inset 0 0 30px rgba(255, 0, 0, 0.2);
+    }
+
+    .neon-card.red-glow {
+        background: rgba(255, 69, 0, 0.05);
+        border: 1px solid rgba(255, 69, 0, 0.2);
+        border-radius: 20px; padding: 2px;
+        box-shadow: 0 0 20px rgba(255, 69, 0, 0.1);
+    }
+    .card-inner { background: #0a0a0a; border-radius: 18px; }
+
+    .btn-outline-pari { border: 1px solid rgba(255, 255, 255, 0.2); color: white; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s;}
+    .btn-check:checked + .btn-outline-pari { background: white; color: black; box-shadow: 0 0 15px white; border-color: white;}
+
+    .bet-input-red {
+        background: transparent !important; border: none !important;
+        border-bottom: 2px solid #ff4500 !important; color: white !important;
+        font-size: 1.5rem; font-weight: bold; text-align: center;
+    }
+    .bet-input-red:focus { box-shadow: none; border-color: #fff !important; }
+
+    .btn-play.red {
+        background: transparent; color: #ff4500; border: 2px solid #ff4500;
+        border-radius: 50px; padding: 15px; font-weight: 900; letter-spacing: 2px;
+        transition: 0.3s;
+    }
+    .btn-play.red:hover:not(:disabled) {
+        background: #ff4500; color: white; box-shadow: 0 0 20px #ff4500;
+    }
+    .btn-play:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); border-color: gray; color: gray;}
+
+    /* Effets de résultat */
+    .win-glow { background: rgba(25, 135, 84, 0.1); border: 1px solid #198754; box-shadow: 0 0 15px rgba(25, 135, 84, 0.4); }
+    .lose-glow { background: rgba(220, 53, 69, 0.1); border: 1px solid #dc3545; box-shadow: 0 0 15px rgba(220, 53, 69, 0.4); }
+    .transition-all { transition: all 0.3s ease; }
+
+    .btn-info-circle-red {
+        background: transparent; border: 1px solid #ff4500; color: #ff4500;
+        width: 40px; height: 40px; border-radius: 50%; transition: 0.3s;
+    }
+    .btn-info-circle-red:hover { background: #ff4500; color: white; box-shadow: 0 0 15px #ff4500;}
+
+    .exit-btn { color: #6c757d; text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
+    .exit-btn:hover { color: white; text-decoration: underline; }
+    
+    .btn-add-funds {
+        background: #ffc107; color: black; width: 45px; height: 45px;
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        text-decoration: none; font-size: 1.5rem; font-weight: bold; transition: 0.3s;
+    }
+    .btn-add-funds:hover { transform: scale(1.1); background: white; }
+
+    .text-muted { opacity: 0.5; filter: blur(1px); }
     @keyframes rotate-neon { 100% { transform: rotate(360deg); } }
 </style>
 {% endblock %}

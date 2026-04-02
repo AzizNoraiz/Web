@@ -6,23 +6,23 @@ class BingoService
 {
     public function jouer(array $choixJoueur, int $mise): array
     {
-        // 1. Tirage de 5 boules uniques entre 1 et 10
+        // 1. Tirage de 5 boules parmi 10
         $nombresPossibles = range(1, 10);
         shuffle($nombresPossibles);
         $tirage = array_slice($nombresPossibles, 0, 5);
 
-        // 2. Calcul des correspondances (combien de chiffres choisis sont dans le tirage)
+        // 2. Calcul des correspondances
         $matches = array_intersect($choixJoueur, $tirage);
         $nombreDeMatches = count($matches);
 
-        // 3. Calcul du gain selon tes règles
+        // 3. Tes nouvelles règles de gain
         $gain = 0;
-        if ($nombreDeMatches === 3) {
-            $gain = $mise * 20;
-        } elseif ($nombreDeMatches === 2) {
-            $gain = $mise * 5;
-        } elseif ($nombreDeMatches === 1) {
-            $gain = $mise; // Remboursé (x1)
+        if ($nombreDeMatches === 5) {
+            $gain = $mise * 100; // Jackpot absolu
+        } elseif ($nombreDeMatches === 4) {
+            $gain = $mise * 5;   // Super gain
+        } elseif ($nombreDeMatches === 3) {
+            $gain = $mise * 2;   // Mise doublée
         }
 
         return [

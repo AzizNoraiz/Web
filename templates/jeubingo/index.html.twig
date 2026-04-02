@@ -5,7 +5,6 @@
 {% block body %}
 <div class="bg-casino min-vh-100 py-5 d-flex align-items-center" style="background: radial-gradient(circle, #05161a 0%, #000000 100%);">
 
-    {# --- HEADER UTILISATEUR --- #}
     <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3" style="z-index: 1000;">
         <div class="text-end">
             <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">{{ app.user.pseudo|default('Joueur') }}</div>
@@ -15,7 +14,6 @@
     </div>
 
     <div class="container text-center">
-        {# --- TITRE --- #}
         <div class="mb-5">
             <h1 class="display-1 fw-bold text-uppercase mb-2 text-info" style="text-shadow: 0px 0px 30px rgba(13, 202, 240, 0.6);">Bingo Royal</h1>
             <div class="d-flex justify-content-center align-items-center gap-3">
@@ -25,7 +23,7 @@
             </div>
         </div>
 
-        {# --- ZONE DES BOULES --- #}
+        {# 5 BOULES AU TIRAGE #}
         <div class="mb-5">
             <p class="text-white-50 text-uppercase small mb-4" style="letter-spacing: 4px;">Tirage de la Cour</p>
             <div class="d-flex justify-content-center flex-wrap gap-3" id="balls-container">
@@ -37,7 +35,6 @@
             </div>
         </div>
 
-        {# --- GRILLE ET MISE --- #}
         <div class="row justify-content-center">
             <div class="col-12 col-lg-8">
                 <div class="neon-card blue-glow">
@@ -46,18 +43,22 @@
                             <div class="col-md-4 border-end border-secondary border-opacity-25 mb-4 mb-md-0">
                                 <label class="form-label small text-uppercase fw-bold text-info mb-3">Mise</label>
                                 <input type="number" id="bet-input" class="form-control bet-input-blue mb-4" value="10" min="1">
-                                <p class="text-white-50 small">Sélectionnez <span id="counter" class="text-info fw-bold">0 / 3</span> numéros.</p>
+                                <p class="text-white-50 small">Sélectionnez <span id="counter" class="text-info fw-bold">0 / 5</span> numéros.</p>
                             </div>
 
                             <div class="col-md-8 pt-3 pt-md-0">
                                 <div class="bingo-grid">
                                     {% for n in 1..10 %}
-                                    {# ATTENTION ICI: L'attribut value="{{ n }}" est crucial pour le JavaScript #}
                                     <input type="checkbox" class="btn-check bingo-checkbox" id="num-{{ n }}" value="{{ n }}" autocomplete="off">
                                     <label class="btn btn-bingo-num" for="num-{{ n }}">{{ n }}</label>
                                     {% endfor %}
                                 </div>
                             </div>
+                        </div>
+
+                        {# BOÎTE DE RÉSULTAT INTÉGRÉE #}
+                        <div id="result-box" class="mt-4 p-3 rounded d-none transition-all">
+                            <h4 id="result-message" class="mb-0 fw-bold text-uppercase" style="letter-spacing: 1px;"></h4>
                         </div>
 
                         <div class="mt-4 pt-4 border-top border-secondary border-opacity-25">
@@ -73,18 +74,20 @@
     </div>
 </div>
 
-{# --- MODAL --- #}
+{# MODAL REGLES #}
 <div class="modal fade" id="rulesModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark border-info shadow-lg">
             <div class="modal-header border-0">
-                <h5 class="modal-title text-info fw-bold text-uppercase">Règles du Bingo</h5>
+                <h5 class="modal-title text-info fw-bold text-uppercase">Règles du Bingo (5/10)</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center py-4 text-white">
-                <div class="d-flex justify-content-between border-bottom border-secondary p-2"><span>3 Numéros</span> <strong class="text-info">x20</strong></div>
-                <div class="d-flex justify-content-between border-bottom border-secondary p-2"><span>2 Numéros</span> <strong>x5</strong></div>
-                <div class="d-flex justify-content-between p-2"><span>1 Numéro</span> <strong class="text-white-50">Remboursé</strong></div>
+                <p class="text-white-50 small">Sélectionnez 5 numéros. La cour tire 5 boules.</p>
+                <div class="d-flex justify-content-between border-bottom border-secondary p-2"><span>5 Numéros (Jackpot)</span> <strong class="text-warning">x100</strong></div>
+                <div class="d-flex justify-content-between border-bottom border-secondary p-2"><span>4 Numéros</span> <strong class="text-info">x5</strong></div>
+                <div class="d-flex justify-content-between border-bottom border-secondary p-2"><span>3 Numéros</span> <strong class="text-success">x2</strong></div>
+                <div class="d-flex justify-content-between p-2"><span>0, 1 ou 2 Numéros</span> <strong class="text-danger">Perdu</strong></div>
             </div>
         </div>
     </div>
@@ -96,26 +99,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnPlay = document.getElementById('btn-play');
     const counterDisplay = document.getElementById('counter');
     const betInput = document.getElementById('bet-input');
+    const resultBox = document.getElementById('result-box');
+    const resultMessage = document.getElementById('result-message');
 
-    // 1. Limiter la sélection à 3 numéros STRICTEMENT
+    // 1. LIMITER LA SÉLECTION À 5 NUMÉROS
     checkboxes.forEach(box => {
         box.addEventListener('change', function() {
             let checkedBoxes = document.querySelectorAll('.bingo-checkbox:checked');
             
-            // Si on essaie de cocher un 4ème numéro, on annule l'action immédiatement
-            if (checkedBoxes.length > 3) {
+            if (checkedBoxes.length > 5) {
                 this.checked = false; 
                 checkedBoxes = document.querySelectorAll('.bingo-checkbox:checked');
             }
 
-            counterDisplay.innerText = `${checkedBoxes.length} / 3`;
+            counterDisplay.innerText = `${checkedBoxes.length} / 5`;
             
-            // Si 3 numéros sont cochés, on active le bouton et on bloque les autres cases
-            if (checkedBoxes.length === 3) {
+            if (checkedBoxes.length === 5) {
                 btnPlay.disabled = false;
-                checkboxes.forEach(b => { 
-                    if (!b.checked) b.disabled = true; 
-                });
+                checkboxes.forEach(b => { if (!b.checked) b.disabled = true; });
             } else {
                 btnPlay.disabled = true;
                 checkboxes.forEach(b => b.disabled = false);
@@ -123,15 +124,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 2. Logique de jeu (Fetch)
+    // 2. LANCER LE TIRAGE
     btnPlay.addEventListener('click', async () => {
         const selected = Array.from(document.querySelectorAll('.bingo-checkbox:checked')).map(cb => parseInt(cb.value));
         const mise = parseInt(betInput.value);
 
-        if (isNaN(mise) || mise <= 0) return alert("Veuillez entrer une mise valide.");
+        if (isNaN(mise) || mise <= 0) {
+            showResult("Erreur: Mise invalide", false);
+            return;
+        }
 
         btnPlay.disabled = true;
-        // Reset visuel des boules
+        resultBox.classList.add('d-none');
+        
+        // Reset des 5 boules
         for(let i=0; i<5; i++) document.getElementById(`ball-${i}`).innerText = "?";
 
         try {
@@ -142,15 +148,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             const data = await response.json();
+            
             if (data.error) {
-                alert(data.error);
+                showResult(data.error, false);
                 btnPlay.disabled = false;
                 return;
             }
 
-            // Animation du tirage
+            // Animation (5 boules)
             for (let i = 0; i < data.tirage.length; i++) {
-                await new Promise(r => setTimeout(r, 600)); // Pause de 0.6s entre chaque boule
+                await new Promise(r => setTimeout(r, 600));
                 const ballEl = document.getElementById(`ball-${i}`);
                 ballEl.innerText = data.tirage[i];
                 ballEl.style.transform = "scale(1.2)";
@@ -161,24 +168,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 200);
             }
 
-            // Résultat final
+            // Affichage du résultat final intégré (plus de pop-up alert)
             setTimeout(() => {
                 document.getElementById('user-jetons').innerText = data.nouveauSolde;
-                if(data.gain > 0) {
-                    let message = data.nbMatches === 1 ? "Remboursé ! " : "Félicitations ! ";
-                    alert(`${message}Vous gagnez ${data.gain} jetons (${data.nbMatches} match(es) !)`);
+                
+                if (data.gain > 0) {
+                    if (data.nbMatches === 5) {
+                        showResult(`🔥 JACKPOT INCROYABLE ! x100 (+ ${data.gain} Jetons) 🔥`, true);
+                    } else if (data.nbMatches === 4) {
+                        showResult(`Superbe ! 4 numéros trouvés ! (+ ${data.gain} Jetons)`, true);
+                    } else {
+                        showResult(`Bien joué ! Mise doublée. (+ ${data.gain} Jetons)`, true);
+                    }
                 } else {
-                    alert("Perdu ! Aucun numéro ne correspond. Retentez votre chance.");
+                    showResult(`Perdu (${data.nbMatches} numéros trouvés)... Retentez votre chance !`, false);
                 }
+                
                 btnPlay.disabled = false;
             }, 600);
 
         } catch (e) {
             console.error(e);
-            alert("Erreur de communication avec le serveur.");
+            showResult("Erreur serveur de communication", false);
             btnPlay.disabled = false;
         }
     });
+
+    function showResult(message, isWin) {
+        resultBox.classList.remove('d-none', 'win-glow', 'lose-glow', 'text-success', 'text-danger');
+        resultMessage.innerText = message;
+        
+        if (isWin) {
+            resultBox.classList.add('win-glow', 'text-success');
+        } else {
+            resultBox.classList.add('lose-glow', 'text-danger');
+        }
+    }
 });
 </script>
 
@@ -187,7 +212,6 @@ document.addEventListener('DOMContentLoaded', () => {
     .divider-blue { height: 1px; width: 80px; background: linear-gradient(to right, transparent, #0dcaf0); }
     .divider-blue-reverse { height: 1px; width: 80px; background: linear-gradient(to left, transparent, #0dcaf0); }
 
-    /* Zone des boules */
     .bingo-ball-placeholder {
         width: 70px; height: 70px;
         background: rgba(13, 202, 240, 0.05);
@@ -195,15 +219,13 @@ document.addEventListener('DOMContentLoaded', () => {
         border-radius: 50%; padding: 5px;
     }
     .ball-inner {
-        width: 100%; height: 100%; 
-        background: #0a0a0a; border-radius: 50%;
+        width: 100%; height: 100%; background: #0a0a0a; border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
         color: #0dcaf0; font-weight: 900; font-size: 1.5rem;
         box-shadow: inset 0 0 15px rgba(13, 202, 240, 0.2);
         transition: transform 0.2s ease, color 0.2s ease;
     }
 
-    /* Carte de jeu (Néon) */
     .neon-card.blue-glow {
         background: rgba(13, 202, 240, 0.05);
         border: 1px solid rgba(13, 202, 240, 0.2);
@@ -212,7 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     .card-inner { background: #0a0a0a; border-radius: 18px; }
 
-    /* Input Mise */
     .bet-input-blue {
         background: transparent !important; border: none !important;
         border-bottom: 2px solid #0dcaf0 !important; color: white !important;
@@ -220,43 +241,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     .bet-input-blue:focus { box-shadow: none; border-color: #fff !important; }
 
-    /* Grille de sélection */
     .bingo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
     .btn-bingo-num {
-        height: 55px; background: #1a1a1a; 
-        border: 1px solid rgba(255,255,255,0.1);
+        height: 55px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1);
         color: white; font-weight: bold; font-size: 1.2rem;
         display: flex; align-items: center; justify-content: center;
         transition: all 0.3s; border-radius: 12px; cursor: pointer;
     }
     .btn-bingo-num:hover { border-color: #0dcaf0; color: #0dcaf0; }
     
-    /* Bouton checké (sélectionné) */
     .btn-check:checked + .btn-bingo-num {
         background: #0dcaf0; color: #000; font-weight: 900;
         box-shadow: 0 0 15px #0dcaf0; border-color: #fff;
     }
-    /* Bouton désactivé (quand 3 sont choisis) */
-    .btn-check:disabled + .btn-bingo-num {
-        opacity: 0.4; cursor: not-allowed;
-    }
-    /* Garder l'opacité pleine pour ceux déjà cochés même si disabled */
-    .btn-check:checked:disabled + .btn-bingo-num {
-        opacity: 1; 
-    }
+    .btn-check:disabled + .btn-bingo-num { opacity: 0.4; cursor: not-allowed; }
+    .btn-check:checked:disabled + .btn-bingo-num { opacity: 1; }
 
-    /* Boutons d'action */
     .btn-play.blue {
-        background: transparent; color: #0dcaf0;
-        border: 2px solid #0dcaf0; border-radius: 50px;
-        padding: 15px; font-weight: 900; letter-spacing: 2px;
+        background: transparent; color: #0dcaf0; border: 2px solid #0dcaf0; 
+        border-radius: 50px; padding: 15px; font-weight: 900; letter-spacing: 2px;
         transition: 0.3s;
     }
     .btn-play.blue:hover:not(:disabled) {
-        background: #0dcaf0; color: black;
-        box-shadow: 0 0 20px #0dcaf0;
+        background: #0dcaf0; color: black; box-shadow: 0 0 20px #0dcaf0;
     }
     .btn-play:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); border-color: gray; color: gray;}
+
+    .win-glow { background: rgba(25, 135, 84, 0.1); border: 1px solid #198754; box-shadow: 0 0 15px rgba(25, 135, 84, 0.4); }
+    .lose-glow { background: rgba(220, 53, 69, 0.1); border: 1px solid #dc3545; box-shadow: 0 0 15px rgba(220, 53, 69, 0.4); }
+    .transition-all { transition: all 0.3s ease; }
 
     .btn-info-circle-blue {
         background: transparent; border: 1px solid #0dcaf0; color: #0dcaf0;

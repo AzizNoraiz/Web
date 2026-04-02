@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route; // ou Annotation\Route selon ta version
+use Symfony\Component\Routing\Attribute\Route; 
 
 class JeubingoController extends AbstractController
 {
@@ -27,13 +27,13 @@ class JeubingoController extends AbstractController
         $choix = $data['choix'] ?? [];
         $mise = (int) ($data['mise'] ?? 0);
 
-        if (count($choix) !== 3) return $this->json(['error' => 'Sélectionnez exactement 3 numéros'], 400);
+        if (count($choix) !== 5) return $this->json(['error' => 'Sélectionnez exactement 5 numéros'], 400);
         if ($user->getJetons() < $mise) return $this->json(['error' => 'Jetons insuffisants'], 400);
 
         // Lancer le jeu
         $resultat = $bingoService->jouer($choix, $mise);
 
-        // Mise à jour de l'utilisateur
+        // Mise à jour du solde
         $user->setJetons($user->getJetons() - $mise + $resultat['gain']);
         $em->flush();
 

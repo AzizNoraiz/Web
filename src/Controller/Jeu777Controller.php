@@ -2,72 +2,46 @@
 
 namespace App\Controller;
 
-use App\Entity\Personne;
+use App\Service\Jeu777Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class Jeu777Controller extends AbstractController
+class Jeu777Controller extends AbstractController
 {
-    #[Route('/jeu777', name: 'app_jeu777', methods: ['GET'])]
+    #[Route('/jeu777', name: 'app_jeu777')]
     public function index(): Response
     {
-        /** @var Personne $user */
-        $user = $this->getUser();
-
-        return $this->render('jeu777/index.html.twig', [
-            'jetons' => $user->getJetons(),
-        ]);
+        return $this->render('jeu777/index.html.twig');
     }
 
-    #[Route('/jeu777/jouer', name: 'app_jeu777_jouer', methods: ['POST'])]
-    public function jouer(Request $request, EntityManagerInterface $em): Response
+    #[Route('/jeu777/play', name: 'app_jeu777_play', methods: ['POST'])]
+    public function play(Request $request, Jeu777Service $gameService, EntityManagerInterface $em): Response
     {
-        /** @var Personne $user */
         $user = $this->getUser();
-        $mise = (int) $request->request->get('mise', 10);
+        if (!$user) return $this->json(['error' => 'Veuillez vous connecter'], 403);
 
-        // --- Validation ---
-        if ($mise <= 0 || $mise > $user->getJetons()) {
-            $this->addFlash('error', 'Mise invalide ou jetons insuffisants.');
-            return $this->redirectToRoute('app_jeu777');
-        }
+        $data = json_decode($request->getContent(), true);
+        $mise = (int) ($data['mise'] ?? 0);
 
-        // --- Génération des rouleaux : $rouleaux[colonne][ligne] ---
-        $rouleaux = [];
-        for ($col = 0; $col < 3; $col++) {
-            for ($ligne = 0; $ligne < 3; $ligne++) {
-                $rouleaux[$col][$ligne] = random_int(1, 10);
-            }
-        }
+        // --- VERIFICATIONS ---
+        if ($mise <= 0) return $this->json(['error' => 'Mise invalide'], 400);
+        if ($user->getJetons() < $mise) return $this->json(['error' => 'Jetons insuffisants'], 400);
 
-        // --- Vérification des lignes gagnantes ---
-        $lignesGagnantes = [];
-        for ($ligne = 0; $ligne < 3; $ligne++) {
-            if (
-                $rouleaux[0][$ligne] === $rouleaux[1][$ligne] &&
-                $rouleaux[1][$ligne] === $rouleaux[2][$ligne]
-            ) {
-                $lignesGagnantes[] = $ligne;
-            }
-        }
+        // --- LOGIQUE DU JEU ---
+        $resultat = $gameService->jouer($mise);
 
-        // --- Calcul du gain : x2 par ligne gagnante ---
-        $gain = count($lignesGagnantes) > 0 ? $mise * (2 * count($lignesGagnantes)) : 0;
-
-        // --- Mise à jour BDD ---
-        $user->setJetons($user->getJetons() - $mise + $gain);
+        // --- MISE À JOUR BDD ---
+        $user->setJetons($user->getJetons() - $mise + $resultat['gain']);
         $em->flush();
 
-        return $this->render('jeu777/index.html.twig', [
-            'jetons'          => $user->getJetons(),
-            'rouleaux'        => $rouleaux,
-            'mise'            => $mise,
-            'gain'            => $gain,
-            'lignesGagnantes' => $lignesGagnantes,
-            'aJoue'           => true,
+        return $this->json([
+            'tirage' => $resultat['tirage'],
+            'gain' => $resultat['gain'],
+            'isJackpot777' => $resultat['isJackpot777'],
+            'nouveauSolde' => $user->getJetons()
         ]);
     }
 }
