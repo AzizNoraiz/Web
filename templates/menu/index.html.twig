@@ -3,7 +3,7 @@
 {% block title %}Casino Royal | Le Salon d'Élite{% endblock %}
 
 {% block body %}
-<div class="bg-casino min-vh-100 py-5 d-flex align-items-center">
+<div class="bg-casino min-vh-100 py-5 d-flex flex-column align-items-center justify-content-center">
 
     {# --- BARRE UTILISATEUR (TOP) --- #}
     <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3" style="z-index: 1000;">
@@ -18,12 +18,12 @@
                 <small class="text-white-50" style="font-size: 0.5em;">JETONS</small>
             </div>
         </div>
-        <a href="/depotretrait" class="btn-add-funds shadow-lg">
+        <a href="{{ path('app_depot_retrait') }}" class="btn-add-funds shadow-lg">
             <span>+</span>
         </a>
     </div>
 
-    <div class="container">
+    <div class="container mt-4">
         {# --- TITRE PRINCIPAL --- #}
         <div class="text-center mb-5">
             <h1 class="display-1 fw-bold text-uppercase mb-2 text-warning"
@@ -38,44 +38,53 @@
         </div>
 
         {# --- GRILLE DES JEUX --- #}
-        <div class="row g-5 justify-content-center mt-2">
+        <div class="row g-5 justify-content-center mt-2 mb-5">
             
             {# JEU 1 : 777 #}
             <div class="col-12 col-md-4">
-                <div class="neon-card gold-glow">
-                    <div class="card-inner text-center">
-                        <div class="game-display text-warning">777</div>
-                        <h2 class="h4 text-white fw-bold text-uppercase mb-3">Le Jackpot</h2>
+                <div class="neon-card gold-glow h-100">
+                    <div class="card-inner text-center d-flex flex-column h-100">
+                        <div class="game-display text-warning mt-3">777</div>
+                        <h2 class="h4 text-white fw-bold text-uppercase mb-3 mt-auto">Le Jackpot</h2>
                         <p class="text-white-50 small mb-4">La machine mythique. Aligne les sept et décroche l'or.</p>
-                        <a href="/jeu777" class="btn-play gold">ENTRER</a>
+                        <a href="{{ path('app_jeu777') }}" class="btn-play gold mt-auto">ENTRER</a>
                     </div>
                 </div>
             </div>
 
             {# JEU 2 : DOUBLE MISE #}
             <div class="col-12 col-md-4">
-                <div class="neon-card red-glow">
-                    <div class="card-inner text-center">
-                        <div class="game-display text-danger">x2</div>
-                        <h2 class="h4 text-white fw-bold text-uppercase mb-3">Double Mise</h2>
+                <div class="neon-card red-glow h-100">
+                    <div class="card-inner text-center d-flex flex-column h-100">
+                        <div class="game-display text-danger mt-3">x2</div>
+                        <h2 class="h4 text-white fw-bold text-uppercase mb-3 mt-auto">Double Mise</h2>
                         <p class="text-white-50 small mb-4">Pile ou face moderne</p>
-                        <a href="{{ path('app_quitte_ou_double') }}" class="btn-play red">ENTRER</a>
+                        <a href="{{ path('app_quitte_ou_double') }}" class="btn-play red mt-auto">ENTRER</a>
                     </div>
                 </div>
             </div>
 
             {# JEU 3 : BINGO #}
             <div class="col-12 col-md-4">
-                <div class="neon-card blue-glow">
-                    <div class="card-inner text-center">
-                        <div class="game-display text-info">B</div>
-                        <h2 class="h4 text-white fw-bold text-uppercase mb-3">Bingo Royal</h2>
+                <div class="neon-card blue-glow h-100">
+                    <div class="card-inner text-center d-flex flex-column h-100">
+                        <div class="game-display text-info mt-3">B</div>
+                        <h2 class="h4 text-white fw-bold text-uppercase mb-3 mt-auto">Bingo Royal</h2>
                         <p class="text-white-50 small mb-4">Le tirage de la cour. Choisis tes chiffres, attend le destin.</p>
-                        <a href="{{ path('app_jeubingo') }}" class="btn-play red">ENTRER</a>
+                        <a href="{{ path('app_jeubingo') }}" class="btn-play blue mt-auto">ENTRER</a>
                     </div>
                 </div>
             </div>
 
+        </div>
+
+        {# --- NOUVEAU BOUTON : HALL OF FAME --- #}
+        <div class="row justify-content-center mt-4">
+            <div class="col-12 col-md-6 col-lg-4 text-center">
+                <a href="{{ path('app_classement') }}" class="btn-play blue py-3 fs-5 shadow-lg w-100 d-block" style="border-color: #0dcaf0; color: #0dcaf0; background: rgba(13, 202, 240, 0.05);">
+                    <i class="bi bi-trophy me-2"></i> HALL OF FAME
+                </a>
+            </div>
         </div>
 
         {# --- BOUTON QUITTER --- #}
@@ -98,5 +107,14 @@
         transform: scale(1.1);
         filter: brightness(1.5) drop-shadow(0 0 10px currentColor);
     }
+    
+    /* Bouton Bleu (pour correspondre au style du Bingo et du bouton classement) */
+    .btn-play.blue {
+        display: inline-block; text-decoration: none;
+        background: transparent; color: #0dcaf0; border: 2px solid #0dcaf0;
+        border-radius: 50px; padding: 10px 20px; font-weight: 900; letter-spacing: 2px;
+        transition: 0.3s;
+    }
+    .btn-play.blue:hover { background: #0dcaf0 !important; color: #000 !important; box-shadow: 0 0 20px #0dcaf0; }
 </style>
 {% endblock %}

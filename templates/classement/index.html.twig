@@ -1,0 +1,135 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Casino Royal | Hall of Fame{% endblock %}
+
+{% block body %}
+<div class="bg-casino min-vh-100 py-5 d-flex flex-column align-items-center" style="background: radial-gradient(circle, #0a1128 0%, #000000 100%);">
+
+    {# --- HEADER --- #}
+    <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3" style="z-index: 1000;">
+        {% if app.user %}
+            <div class="text-end">
+                <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">{{ app.user.pseudo|default('Joueur') }}</div>
+                <div class="text-warning fw-bold fs-3">{{ app.user.jetons|default(0) }} <small class="text-white-50" style="font-size: 0.5em;">JETONS</small></div>
+            </div>
+        {% endif %}
+        <a href="/menu" class="btn-close-custom shadow-lg"><span>X</span></a>
+    </div>
+
+    <div class="container text-center mt-4">
+        <div class="mb-5">
+            <h1 class="display-2 fw-bold text-uppercase mb-2 main-title-blue">Hall of Fame</h1>
+            <div class="d-flex justify-content-center align-items-center gap-3">
+                <div class="divider-blue"></div>
+                <p class="text-uppercase mb-0 fw-light text-info" style="letter-spacing: 4px; font-size: 0.9rem;">Les Légendes du Casino</p>
+                <div class="divider-blue-reverse"></div>
+            </div>
+        </div>
+
+        {# --- TABLEAU DES SCORES --- #}
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <div class="neon-card blue-glow">
+                    <div class="card-inner p-4 p-md-5">
+                        
+                        <div class="table-responsive">
+                            <table class="table table-borderless text-white align-middle mb-0">
+                                <thead>
+                                    <tr class="text-info text-uppercase" style="border-bottom: 1px solid rgba(13, 202, 240, 0.3); letter-spacing: 2px;">
+                                        <th scope="col" class="pb-3 text-center">Rang</th>
+                                        <th scope="col" class="pb-3 text-start">Joueur</th>
+                                        <th scope="col" class="pb-3 text-end">Fortune</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for joueur in joueurs %}
+                                        {# Détermination du style en fonction du rang #}
+                                        {% set rankClass = '' %}
+                                        {% set icon = '' %}
+                                        
+                                        {% if loop.index == 1 %}
+                                            {% set rankClass = 'rank-gold fs-4 fw-bold' %}
+                                            {% set icon = '👑' %}
+                                        {% elseif loop.index == 2 %}
+                                            {% set rankClass = 'rank-silver fs-5 fw-bold' %}
+                                        {% elseif loop.index == 3 %}
+                                            {% set rankClass = 'rank-bronze fs-5 fw-bold' %}
+                                        {% else %}
+                                            {% set rankClass = 'text-white-50' %}
+                                        {% endif %}
+
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.3s;" class="hover-row">
+                                            <td class="py-3 text-center {{ rankClass }}">
+                                                #{{ loop.index }}
+                                            </td>
+                                            <td class="py-3 text-start fw-bold fs-5">
+                                                {{ joueur.pseudo|default(joueur.email|split('@')[0]) }} {{ icon }}
+                                            </td>
+                                            <td class="py-3 text-end text-warning fw-bold fs-5" style="letter-spacing: 1px;">
+                                                {{ joueur.jetons|number_format(0, ',', ' ') }} <span class="text-white-50 fs-6">J</span>
+                                            </td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="3" class="text-center py-5 text-white-50">Aucun joueur enregistré pour le moment.</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-5">
+                            <a href="/menu" class="btn-play blue px-5 py-2">RETOURNER AU MENU</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Titre et diviseurs Bleu/Info */
+    .main-title-blue {
+        color: #0dcaf0;
+        text-shadow: 0px 0px 30px rgba(13, 202, 240, 0.6);
+        letter-spacing: -1px;
+    }
+    .divider-blue { height: 1px; width: 80px; background: linear-gradient(to right, transparent, #0dcaf0); }
+    .divider-blue-reverse { height: 1px; width: 80px; background: linear-gradient(to left, transparent, #0dcaf0); }
+
+    /* Carte Néon Bleue */
+    .neon-card.blue-glow {
+        background: rgba(13, 202, 240, 0.03);
+        border: 1px solid rgba(13, 202, 240, 0.2);
+        border-radius: 20px; padding: 2px;
+        box-shadow: 0 0 30px rgba(13, 202, 240, 0.1);
+    }
+    .card-inner { background: #0a0a0a; border-radius: 18px; }
+
+    /* Rangs (Or, Argent, Bronze) */
+    .rank-gold { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+    .rank-silver { color: #c0c0c0; text-shadow: 0 0 10px rgba(192, 192, 192, 0.5); }
+    .rank-bronze { color: #cd7f32; text-shadow: 0 0 10px rgba(205, 127, 50, 0.5); }
+
+    /* Lignes du tableau */
+    .hover-row:hover { background: rgba(255, 255, 255, 0.02); }
+
+    /* Bouton retour Bleu */
+    .btn-play.blue {
+        display: inline-block; text-decoration: none;
+        background: transparent; color: #0dcaf0; border: 2px solid #0dcaf0;
+        border-radius: 50px; font-weight: 900; letter-spacing: 2px;
+        transition: 0.3s;
+    }
+    .btn-play.blue:hover { background: #0dcaf0; color: #000; box-shadow: 0 0 20px #0dcaf0; }
+
+    /* Bouton fermer (X) */
+    .btn-close-custom {
+        background: #343a40; color: white; width: 45px; height: 45px;
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        text-decoration: none; font-size: 1.2rem; font-weight: bold; transition: 0.3s;
+    }
+    .btn-close-custom:hover { transform: scale(1.1); background: #dc3545; color: white; box-shadow: 0 0 15px #dc3545;}
+</style>
+{% endblock %}
