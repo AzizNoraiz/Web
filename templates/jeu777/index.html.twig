@@ -3,7 +3,7 @@
 {% block title %}Casino Royal | Le 777{% endblock %}
 
 {% block body %}
-<div class="bg-casino min-vh-100 py-5 d-flex align-items-center" style="background: radial-gradient(circle, #2a1f00 0%, #000000 100%);">
+<div class="bg-casino min-vh-100 py-5 d-flex align-items-center" style="background: radial-gradient(circle, #2a1f00 0%, #000000 100%); overflow: hidden;">
 
     {# --- HEADER --- #}
     <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3" style="z-index: 1000;">
@@ -25,16 +25,28 @@
             </div>
         </div>
 
-        {# --- MACHINE À SOUS (3 ROULEAUX) --- #}
-        <div class="row justify-content-center mb-5">
-            <div class="col-auto">
-                <div class="neon-card gold-glow shadow-lg p-3">
+        {# --- MACHINE À SOUS AVEC MANIVELLE --- #}
+        <div class="row justify-content-center align-items-center mb-5">
+            
+            <div class="col-auto d-flex align-items-end position-relative">
+                
+                {# La machine elle-même #}
+                <div class="neon-card gold-glow shadow-lg p-3 z-2">
                     <div class="card-inner p-4 d-flex gap-4" style="border-radius: 15px;">
                         <div class="reel"><span class="reel-number" id="reel-0">7</span></div>
                         <div class="reel"><span class="reel-number" id="reel-1">7</span></div>
                         <div class="reel"><span class="reel-number" id="reel-2">7</span></div>
                     </div>
                 </div>
+
+                {# La manivelle (fixée sur le côté droit de la machine) #}
+                <div class="lever-container ms-2">
+                    <div class="lever-base"></div>
+                    <div id="lever-arm" class="lever-arm">
+                        <div class="lever-handle"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -54,7 +66,11 @@
                             <h5 id="result-message" class="mb-0 fw-bold text-uppercase" style="letter-spacing: 1px;"></h5>
                         </div>
 
-                        <button id="btn-play" class="btn-play gold w-100 mb-3">TIRER LA MANIVELLE</button>
+                        {# Le bouton textuel reste en sécurité si la manivelle est cachée sur mobile #}
+                        <button id="btn-play-text" class="btn-play gold w-100 mb-3 d-md-none">TIRER LA MANIVELLE</button>
+                        
+                        <p class="text-white-50 small mb-3 d-none d-md-block"><i class="bi bi-hand-index-thumb"></i> Cliquez sur la manivelle pour jouer</p>
+
                         <a href="/menu" class="exit-btn d-block mt-2">QUITTER LA MACHINE</a>
                     </div>
                 </div>
@@ -65,6 +81,7 @@
 
 {# --- MODAL RÈGLES --- #}
 <div class="modal fade" id="rulesModal" tabindex="-1" aria-hidden="true">
+    {# ... (Le contenu du modal reste inchangé) ... #}
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark border-warning shadow-lg">
             <div class="modal-header border-0">
@@ -92,7 +109,10 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const btnPlay = document.getElementById('btn-play');
+    // Éléments
+    const leverArm = document.getElementById('lever-arm');
+    const leverContainer = document.querySelector('.lever-container');
+    const btnPlayText = document.getElementById('btn-play-text'); // Fallback mobile
     const betInput = document.getElementById('bet-input');
     const jetonsDisplay = document.getElementById('user-jetons');
     const resultBox = document.getElementById('result-box');
@@ -104,7 +124,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('reel-2')
     ];
 
-    btnPlay.addEventListener('click', async () => {
+    let isPlaying = false;
+
+    // Fonction de déclenchement du jeu
+    async function play() {
+        if (isPlaying) return;
+        
         const mise = parseInt(betInput.value);
 
         if (isNaN(mise) || mise <= 0) {
@@ -112,7 +137,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        btnPlay.disabled = true;
+        // Bloquer les interactions
+        isPlaying = true;
+        if(btnPlayText) btnPlayText.disabled = true;
+        leverArm.style.pointerEvents = 'none';
+        
+        // Animation CSS de la manivelle
+        leverArm.classList.add('pulled');
+        setTimeout(() => {
+            leverArm.classList.remove('pulled');
+        }, 500); // La manivelle remonte après 0.5s
+
         resultBox.classList.add('d-none');
         reels.forEach(reel => reel.classList.add('text-muted', 'spinning'));
 
@@ -126,12 +161,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             if (data.error) {
                 showResult(data.error, false);
-                btnPlay.disabled = false;
-                reels.forEach(reel => reel.classList.remove('text-muted', 'spinning'));
+                resetPlayState();
                 return;
             }
 
-            // Animation : Les chiffres défilent à toute vitesse
+            // Animation des rouleaux
             let count = 0;
             const spinInterval = setInterval(() => {
                 reels.forEach(reel => reel.innerText = Math.floor(Math.random() * 9) + 1);
@@ -139,15 +173,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (++count > 20) {
                     clearInterval(spinInterval);
                     
-                    // Arrêt des rouleaux un par un (Effet Slot Machine)
                     stopReel(0, data.tirage[0], 0);
-                    stopReel(1, data.tirage[1], 400); // S'arrête 0.4s plus tard
-                    stopReel(2, data.tirage[2], 800); // S'arrête 0.8s plus tard
+                    stopReel(1, data.tirage[1], 400); 
+                    stopReel(2, data.tirage[2], 800); 
                     
-                    // Affichage du résultat après l'arrêt du dernier rouleau
                     setTimeout(() => {
                         jetonsDisplay.innerText = data.nouveauSolde;
-                        btnPlay.disabled = false;
+                        resetPlayState();
 
                         if (data.gain > 0) {
                             if (data.isJackpot777) {
@@ -170,10 +202,21 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             console.error(e);
             showResult("Erreur de communication", false);
-            btnPlay.disabled = false;
-            reels.forEach(reel => reel.classList.remove('text-muted', 'spinning'));
+            resetPlayState();
         }
-    });
+    }
+
+    // Gestionnaires d'événements
+    leverArm.addEventListener('click', play);
+    if(btnPlayText) btnPlayText.addEventListener('click', play);
+
+    // Fonctions utilitaires
+    function resetPlayState() {
+        isPlaying = false;
+        if(btnPlayText) btnPlayText.disabled = false;
+        leverArm.style.pointerEvents = 'auto';
+        reels.forEach(reel => reel.classList.remove('text-muted', 'spinning'));
+    }
 
     function stopReel(index, finalValue, delay) {
         setTimeout(() => {
@@ -193,18 +236,17 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             resultBox.classList.add('lose-glow-dark', 'text-danger');
         }
-        // Remettre la couleur des rouleaux au blanc par défaut
         if(!isWin) reels.forEach(r => r.style.color = "white");
     }
 });
 </script>
 
 <style>
+    /* ... (Garder les styles existants) ... */
     .main-title { text-shadow: 0px 0px 30px rgba(255, 140, 0, 0.6); font-size: calc(2.5rem + 4vw); }
     .divider-gold { height: 1px; width: 80px; background: linear-gradient(to right, transparent, #ff8c00); }
     .divider-gold-reverse { height: 1px; width: 80px; background: linear-gradient(to left, transparent, #ff8c00); }
 
-    /* Rouleaux */
     .reel {
         background: linear-gradient(145deg, #1a1a1a, #000);
         width: 100px; height: 140px; border-radius: 12px;
@@ -216,7 +258,6 @@ document.addEventListener('DOMContentLoaded', () => {
     .reel-number { font-size: 4rem; font-weight: 900; color: white; text-shadow: 0 0 15px rgba(255, 255, 255, 0.2); }
     .spinning { filter: blur(2px); opacity: 0.8; }
 
-    /* Cartes Néon Or */
     .neon-card.gold-glow {
         background: rgba(255, 140, 0, 0.05);
         border: 1px solid rgba(255, 140, 0, 0.3);
@@ -249,7 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     .btn-play:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); border-color: gray; color: gray;}
 
-    /* Effets de résultat intégrés */
     .win-glow-gold { background: rgba(255, 193, 7, 0.1); border: 1px solid #ffc107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.4); }
     .lose-glow-dark { background: rgba(220, 53, 69, 0.1); border: 1px solid #dc3545; box-shadow: 0 0 15px rgba(220, 53, 69, 0.2); }
     .transition-all { transition: all 0.3s ease; }
@@ -270,5 +310,69 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     .btn-add-funds:hover { transform: scale(1.1); background: white; }
     .text-muted { opacity: 0.5; }
+
+    /* --- STYLES DE LA MANIVELLE --- */
+    .lever-container {
+        position: relative;
+        height: 140px; /* Aligné avec la hauteur des rouleaux */
+        width: 40px;
+        display: none; /* Caché sur petits écrans, affiché via media query */
+    }
+
+    @media (min-width: 768px) {
+        .lever-container {
+            display: block;
+        }
+    }
+
+    .lever-base {
+        position: absolute;
+        bottom: 20px;
+        left: 0;
+        width: 30px;
+        height: 50px;
+        background: linear-gradient(to right, #444, #888, #444);
+        border-radius: 5px;
+        border: 2px solid #222;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        z-index: 1;
+    }
+
+    .lever-arm {
+        position: absolute;
+        bottom: 45px;
+        left: 10px;
+        width: 10px;
+        height: 100px;
+        background: linear-gradient(to right, #ccc, #fff, #ccc);
+        border-radius: 5px;
+        transform-origin: bottom center;
+        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    /* La poignée rouge en haut de la manivelle */
+    .lever-handle {
+        position: absolute;
+        top: -15px;
+        left: -10px;
+        width: 30px;
+        height: 30px;
+        background: radial-gradient(circle at 30% 30%, #ff4d4d, #b30000);
+        border-radius: 50%;
+        box-shadow: inset -2px -2px 5px rgba(0,0,0,0.5), 2px 2px 5px rgba(0,0,0,0.5);
+        transition: background 0.2s ease;
+    }
+
+    .lever-arm:hover .lever-handle {
+        background: radial-gradient(circle at 30% 30%, #ff6666, #cc0000);
+        box-shadow: 0 0 10px #ff4d4d;
+    }
+
+    /* Animation CSS déclenchée par le JS */
+    .lever-arm.pulled {
+        transform: rotateX(180deg) scaleY(0.5); /* Simule l'effet 3D de la manivelle tirée vers le bas */
+    }
 </style>
 {% endblock %}
