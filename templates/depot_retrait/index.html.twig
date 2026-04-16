@@ -1,0 +1,171 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Casino Royal | La Banque{% endblock %}
+
+{% block body %}
+<div class="bg-casino min-vh-100 py-5 d-flex align-items-center" style="background: radial-gradient(circle, #1a1a05 0%, #000000 100%);">
+
+    {# --- HEADER --- #}
+    <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3" style="z-index: 1000;">
+        <div class="text-end">
+            <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">{{ app.user.pseudo|default('Joueur') }}</div>
+            <div class="text-warning fw-bold fs-3"><span id="user-jetons">{{ app.user.jetons|default(0) }}</span> <small class="text-white-50" style="font-size: 0.5em;">JETONS</small></div>
+        </div>
+        <a href="/menu" class="btn-add-funds shadow-lg" style="background: #6c757d; color: white;"><span>X</span></a>
+    </div>
+
+    <div class="container text-center">
+        <div class="mb-5">
+            <h1 class="display-1 fw-bold text-uppercase mb-2 text-warning" style="text-shadow: 0px 0px 30px rgba(255, 193, 7, 0.6);">La Banque</h1>
+            <div class="d-flex justify-content-center align-items-center gap-3">
+                <div class="divider-gold"></div>
+                <p class="text-uppercase mb-0 fw-light text-warning" style="letter-spacing: 4px; font-size: 0.9rem;">Gérez vos fonds</p>
+                <div class="divider-gold-reverse"></div>
+            </div>
+        </div>
+
+        {# --- INTERFACE BANCAIRE --- #}
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-5">
+                <div class="neon-card gold-glow">
+                    <div class="card-inner p-4">
+                        
+                        <label class="form-label small text-uppercase fw-bold text-warning mb-3">Montant de la transaction</label>
+                        
+                        <div class="input-group mb-4 px-3">
+                            <span class="input-group-text bg-transparent border-0 text-white-50">JETONS:</span>
+                            <input type="number" id="transaction-amount" class="form-control bet-input-gold" placeholder="Ex: 1000" min="1">
+                        </div>
+
+                        {# BOÎTE DE RÉSULTAT INTÉGRÉE #}
+                        <div id="result-box" class="mb-4 p-3 rounded d-none transition-all">
+                            <h6 id="result-message" class="mb-0 fw-bold text-uppercase" style="letter-spacing: 1px;"></h6>
+                        </div>
+
+                        <div class="d-flex gap-3 mb-3">
+                            <button id="btn-depot" class="btn-action btn-depot flex-fill py-3">DÉPOSER</button>
+                            <button id="btn-retrait" class="btn-action btn-retrait flex-fill py-3">RETIRER</button>
+                        </div>
+                        
+                        <a href="/menu" class="exit-btn d-block mt-3 text-white-50">RETOURNER AU MENU</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const btnDepot = document.getElementById('btn-depot');
+    const btnRetrait = document.getElementById('btn-retrait');
+    const amountInput = document.getElementById('transaction-amount');
+    const jetonsDisplay = document.getElementById('user-jetons');
+    const resultBox = document.getElementById('result-box');
+    const resultMessage = document.getElementById('result-message');
+
+    async function handleTransaction(action) {
+        const montant = parseInt(amountInput.value);
+
+        if (isNaN(montant) || montant <= 0) {
+            showResult("Veuillez saisir un montant valide.", false);
+            return;
+        }
+
+        // Désactiver les boutons pendant le traitement
+        btnDepot.disabled = true;
+        btnRetrait.disabled = true;
+
+        try {
+            const response = await fetch('{{ path('app_depot_retrait_transaction') }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: action, montant: montant })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                showResult(data.error, false);
+            } else {
+                // Mise à jour de l'affichage
+                jetonsDisplay.innerText = data.nouveauSolde;
+                showResult(data.message, true);
+                amountInput.value = ''; // Réinitialiser le champ
+            }
+        } catch (e) {
+            console.error(e);
+            showResult("Erreur de communication avec la banque.", false);
+        } finally {
+            // Réactiver les boutons
+            btnDepot.disabled = false;
+            btnRetrait.disabled = false;
+        }
+    }
+
+    btnDepot.addEventListener('click', () => handleTransaction('depot'));
+    btnRetrait.addEventListener('click', () => handleTransaction('retrait'));
+
+    function showResult(message, isSuccess) {
+        resultBox.classList.remove('d-none', 'win-glow', 'lose-glow', 'text-success', 'text-danger', 'text-warning');
+        resultMessage.innerText = message;
+        
+        if (isSuccess) {
+            resultBox.classList.add('win-glow', 'text-success');
+        } else {
+            resultBox.classList.add('lose-glow', 'text-danger');
+        }
+    }
+});
+</script>
+
+<style>
+    /* Diviseurs Or */
+    .divider-gold { height: 1px; width: 100px; background: linear-gradient(to right, transparent, #ffc107); }
+    .divider-gold-reverse { height: 1px; width: 100px; background: linear-gradient(to left, transparent, #ffc107); }
+
+    /* Carte Néon Or */
+    .neon-card.gold-glow {
+        background: rgba(255, 193, 7, 0.05);
+        border: 1px solid rgba(255, 193, 7, 0.3);
+        border-radius: 20px; padding: 2px;
+        box-shadow: 0 0 20px rgba(255, 193, 7, 0.15);
+    }
+    .card-inner { background: #0a0a0a; border-radius: 18px; }
+
+    /* Input Or */
+    .bet-input-gold {
+        background: transparent !important; border: none !important;
+        border-bottom: 2px solid #ffc107 !important; color: white !important;
+        font-size: 1.5rem; font-weight: bold; text-align: center;
+    }
+    .bet-input-gold:focus { box-shadow: none; border-color: #fff !important; }
+
+    /* Boutons d'action */
+    .btn-action {
+        border-radius: 50px; font-weight: 900; letter-spacing: 1px;
+        transition: 0.3s; border: 2px solid transparent; background: transparent;
+    }
+    .btn-depot { color: #198754; border-color: #198754; }
+    .btn-depot:hover:not(:disabled) { background: #198754; color: white; box-shadow: 0 0 15px #198754; }
+    
+    .btn-retrait { color: #dc3545; border-color: #dc3545; }
+    .btn-retrait:hover:not(:disabled) { background: #dc3545; color: white; box-shadow: 0 0 15px #dc3545; }
+    
+    .btn-action:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+
+    /* Effets de message */
+    .win-glow { background: rgba(25, 135, 84, 0.1); border: 1px solid #198754; box-shadow: 0 0 15px rgba(25, 135, 84, 0.4); }
+    .lose-glow { background: rgba(220, 53, 69, 0.1); border: 1px solid #dc3545; box-shadow: 0 0 15px rgba(220, 53, 69, 0.4); }
+    .transition-all { transition: all 0.3s ease; }
+    
+    .exit-btn { text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
+    .exit-btn:hover { color: #ffc107 !important; text-decoration: underline; }
+    
+    .btn-add-funds {
+        width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        text-decoration: none; font-size: 1.2rem; font-weight: bold; transition: 0.3s;
+    }
+    .btn-add-funds:hover { transform: scale(1.1); background: white !important; color: black !important; }
+</style>
+{% endblock %}
