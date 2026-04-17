@@ -1,5 +1,4 @@
-# =============================================================
-# CHATBOT CASINO ROYAL - NIVEAU 3 : RAG + API Groq (llama)
+# CHATBOT CASINO ROYAL
 #pip install groq
 # =============================================================
 
@@ -11,33 +10,26 @@ from sklearn.metrics.pairwise import cosine_similarity
 from groq import Groq
 import numpy as np
 
-# -------------------------------------------------------------
 # CONFIGURATION 
-# -------------------------------------------------------------
-API_KEY = "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"
+API_KEY = ""
 client = Groq(api_key=API_KEY)
 
-# -------------------------------------------------------------
-# ETAPE 1 — Chargement spaCy + données du Casino
-# -------------------------------------------------------------
+
+#Chargement spaCy + données du Casino
 nlp = spacy.load("fr_core_news_sm")
 
 # On charge le nouveau fichier JSON
 with open("bibliotheque.json", "r", encoding="utf-8") as f:
     casino_data = json.load(f)
 
-# -------------------------------------------------------------
 # ETAPE 2 — Lemmatisation
-# -------------------------------------------------------------
 def lemmatiser(texte):
     doc = nlp(texte.lower())
     lemmes = [token.lemma_ for token in doc
               if not token.is_stop and not token.is_punct]
     return " ".join(lemmes)
 
-# -------------------------------------------------------------
 # ETAPE 3 — Construction de la matrice TF-IDF 
-# -------------------------------------------------------------
 def construire_description(jeu):
     # On concatène les infos du jeu pour la recherche
     return (
@@ -51,9 +43,7 @@ descriptions = [lemmatiser(construire_description(j)) for j in casino_data]
 vectoriseur = TfidfVectorizer()
 matrice_tfidf = vectoriseur.fit_transform(descriptions)
 
-# -------------------------------------------------------------
 # ETAPE 4 — Retrieval : récupérer les jeux les plus pertinents
-# -------------------------------------------------------------
 def recuperer_jeux_pertinents(requete, top_n=2):
     """
     Retourne les top_n jeux les plus pertinents pour la requête.
@@ -70,9 +60,7 @@ def recuperer_jeux_pertinents(requete, top_n=2):
 
     return jeux_pertinents
 
-# -------------------------------------------------------------
 # ETAPE 5 — Construction du Contexte pour GPT
-# -------------------------------------------------------------
 def construire_contexte(jeux):
     if not jeux:
         return "Aucun jeu spécifique trouvé correspondant à la demande."
@@ -87,9 +75,7 @@ def construire_contexte(jeux):
         contexte += f"  - Gains        : {jeu['Gains']}\n\n"
     return contexte
 
-# -------------------------------------------------------------
 # ETAPE 6 — Prompt Système (Le rôle du Croupier)
-# -------------------------------------------------------------
 SYSTEM_PROMPT = """
 Tu es l'hôte virtuel officiel et le croupier en chef du 'Casino Royal'.
 Tu accueilles les joueurs avec élégance, politesse et une touche de mystère.
@@ -103,16 +89,12 @@ Règles strictes :
 5. Utilise un vocabulaire de casino élégant (jetons, mise, croupier, salon, chance).
 """
 
-# -------------------------------------------------------------
 # ETAPE 7 — Historique de conversation
-# -------------------------------------------------------------
 historique = [
     {"role": "system", "content": SYSTEM_PROMPT}
 ]
 
-# -------------------------------------------------------------
 # ETAPE 8 — Appel à l'API OpenAI
-# -------------------------------------------------------------
 def appeler_gpt(requete_utilisateur, contexte_jeux):
     message_augmente = f"""
 Question du joueur : {requete_utilisateur}
@@ -135,9 +117,9 @@ Réponds à la question en te basant uniquement sur les jeux ci-dessus.
 
     return texte_reponse
 
-# -------------------------------------------------------------
+
 # ETAPE 9 — Fonction principale
-# -------------------------------------------------------------
+
 def chatbot_rag(requete):
     jeux_pertinents = recuperer_jeux_pertinents(requete, top_n=2)
     contexte = construire_contexte(jeux_pertinents)

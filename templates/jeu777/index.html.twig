@@ -25,7 +25,7 @@
             </div>
         </div>
 
-        {# --- MACHINE À SOUS AVEC MANIVELLE --- #}
+        {# MACHINE À SOUS AVEC MANIVELLE#}
         <div class="row justify-content-center align-items-center mb-5">
             
             <div class="col-auto d-flex align-items-end position-relative">
@@ -79,9 +79,8 @@
     </div>
 </div>
 
-{# --- MODAL RÈGLES --- #}
+{# RÈGLES#}
 <div class="modal fade" id="rulesModal" tabindex="-1" aria-hidden="true">
-    {# ... (Le contenu du modal reste inchangé) ... #}
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark border-warning shadow-lg">
             <div class="modal-header border-0">
@@ -108,7 +107,7 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('turbo:load', () => {
     // Éléments
     const leverArm = document.getElementById('lever-arm');
     const leverContainer = document.querySelector('.lever-container');

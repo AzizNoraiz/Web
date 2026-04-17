@@ -26,14 +26,14 @@ class Jeu777Controller extends AbstractController
         $data = json_decode($request->getContent(), true);
         $mise = (int) ($data['mise'] ?? 0);
 
-        // --- VERIFICATIONS ---
+        //VERIFICATIONS
         if ($mise <= 0) return $this->json(['error' => 'Mise invalide'], 400);
         if ($user->getJetons() < $mise) return $this->json(['error' => 'Jetons insuffisants'], 400);
 
-        // --- LOGIQUE DU JEU ---
+        //LOGIQUE DU JEU
         $resultat = $gameService->jouer($mise);
 
-        // --- MISE À JOUR BDD ---
+        //MISE À JOUR BDD
         $user->setJetons($user->getJetons() - $mise + $resultat['gain']);
         $em->flush();
 

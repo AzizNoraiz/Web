@@ -166,7 +166,6 @@
     </head>
     <body>
         
-        {# --- CONTENU PRINCIPAL DU SITE (C'est ici que viendra s'insérer ton menu.html.twig) --- #}
         {% block body %}{% endblock %}
 
         {# --- BOUTON FLOTTANT CHATBOT --- #}
@@ -197,7 +196,7 @@
 
         {# --- LE CERVEAU DU CHATBOT (JAVASCRIPT) --- #}
         <script>
-            document.addEventListener("DOMContentLoaded", function() {
+            document.addEventListener('turbo:load', function() {
                 const chatBtn = document.getElementById("chatbot-btn");
                 const chatWidget = document.getElementById("chat-widget");
                 const closeChat = document.getElementById("close-chat");
