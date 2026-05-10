@@ -13,8 +13,8 @@ import numpy as np
 load_dotenv()
 
 # Récupère la clé automatiquement
-api_key = os.getenv("GROK_API_KEY")
-client = Groq(api_key)
+api_key = os.getenv("API_KEY")
+client = Groq(api_key=api_key)
 
 
 #Chargement spaCy + données du Casino

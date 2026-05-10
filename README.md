@@ -54,3 +54,6 @@ pip3 install -r requirements.txt
 
 # Lancer le ChatBot
 python3 serveurBot.py
+
+#Pour terminer lancer http://localhost:8080/home pour avoir la premiére vue du site 
+#Bon jeu et que le Meilleur Gagne 
