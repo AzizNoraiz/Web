@@ -1,6 +1,4 @@
 # CHATBOT CASINO ROYAL
-#pip install groq
-# =============================================================
 
 import json
 import os
@@ -8,11 +6,15 @@ import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from groq import Groq
+from dotenv import load_dotenv
 import numpy as np
 
-# CONFIGURATION 
-API_KEY = ""
-client = Groq(api_key=API_KEY)
+# Charge les variables du fichier .env
+load_dotenv()
+
+# Récupère la clé automatiquement
+api_key = os.getenv("GROK_API_KEY")
+client = Groq(api_key)
 
 
 #Chargement spaCy + données du Casino
@@ -22,14 +24,14 @@ nlp = spacy.load("fr_core_news_sm")
 with open("bibliotheque.json", "r", encoding="utf-8") as f:
     casino_data = json.load(f)
 
-# ETAPE 2 — Lemmatisation
+# Lemmatisation
 def lemmatiser(texte):
     doc = nlp(texte.lower())
     lemmes = [token.lemma_ for token in doc
               if not token.is_stop and not token.is_punct]
     return " ".join(lemmes)
 
-# ETAPE 3 — Construction de la matrice TF-IDF 
+# Construction de la matrice TF-IDF 
 def construire_description(jeu):
     # On concatène les infos du jeu pour la recherche
     return (
@@ -43,7 +45,7 @@ descriptions = [lemmatiser(construire_description(j)) for j in casino_data]
 vectoriseur = TfidfVectorizer()
 matrice_tfidf = vectoriseur.fit_transform(descriptions)
 
-# ETAPE 4 — Retrieval : récupérer les jeux les plus pertinents
+# Retrieval : récupérer les jeux les plus pertinents
 def recuperer_jeux_pertinents(requete, top_n=2):
     """
     Retourne les top_n jeux les plus pertinents pour la requête.
@@ -60,7 +62,7 @@ def recuperer_jeux_pertinents(requete, top_n=2):
 
     return jeux_pertinents
 
-# ETAPE 5 — Construction du Contexte pour GPT
+# Construction du Contexte pour GROK
 def construire_contexte(jeux):
     if not jeux:
         return "Aucun jeu spécifique trouvé correspondant à la demande."
@@ -75,7 +77,7 @@ def construire_contexte(jeux):
         contexte += f"  - Gains        : {jeu['Gains']}\n\n"
     return contexte
 
-# ETAPE 6 — Prompt Système (Le rôle du Croupier)
+# ETAPE 6 — Prompt Système
 SYSTEM_PROMPT = """
 Tu es l'hôte virtuel officiel et le croupier en chef du 'Casino Royal'.
 Tu accueilles les joueurs avec élégance, politesse et une touche de mystère.
@@ -94,7 +96,7 @@ historique = [
     {"role": "system", "content": SYSTEM_PROMPT}
 ]
 
-# ETAPE 8 — Appel à l'API OpenAI
+# ETAPE 8 — Appel à l'API GROK
 def appeler_gpt(requete_utilisateur, contexte_jeux):
     message_augmente = f"""
 Question du joueur : {requete_utilisateur}

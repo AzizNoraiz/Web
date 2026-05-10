@@ -102,7 +102,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color: #212529; /* Correction ici */
+                color: #212529;
                 text-decoration: none;
                 font-weight: bold;
                 font-size: 1.5rem;
@@ -110,7 +110,7 @@
             }
             .btn-add-funds:hover {
                 transform: scale(1.1) rotate(90deg);
-                color: #212529; /* Correction ici */
+                color: #212529;
             }
 
             /* --- LIENS DE SORTIE --- */
@@ -122,7 +122,7 @@
                 transition: 0.4s;
             }
             .exit-btn:hover {
-                color: #212529 !important; /* Correction ici */
+                color: #212529 !important;
                 letter-spacing: 2px;
             }
 
@@ -194,7 +194,6 @@
             💬 Aide
         </button>
 
-        {# --- LE CERVEAU DU CHATBOT (JAVASCRIPT) --- #}
         <script>
             document.addEventListener('turbo:load', function() {
                 const chatBtn = document.getElementById("chatbot-btn");
@@ -220,7 +219,7 @@
                     const text = userInput.value.trim();
                     if (!text) return;
 
-                    // 1. Afficher le message de l'utilisateur
+                    // Afficher le message de l'utilisateur
                     chatMessages.innerHTML += `<div class="message mb-3 text-end"><span class="text-white-50">${text}</span> <span class="text-primary fw-bold">< Vous</span></div>`;
                     userInput.value = "";
                     
@@ -230,7 +229,7 @@
                     chatMessages.scrollTop = chatMessages.scrollHeight;
 
                     try {
-                        // 2. Envoyer au serveur Python (Flask)
+                        // Envoyer au serveur Python (Flask)
                         const response = await fetch("http://127.0.0.1:5000/chat", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
@@ -238,7 +237,7 @@
                         });
                         const data = await response.json();
 
-                        // 3. Afficher la réponse
+                        //Afficher la réponse
                         document.getElementById(waitId).remove();
                         chatMessages.innerHTML += `<div class="message mb-3"><span class="text-warning fw-bold">Hôte ></span> ${data.reponse.replace(/\n/g, '<br>')}</div>`;
                         chatMessages.scrollTop = chatMessages.scrollHeight;

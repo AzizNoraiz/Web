@@ -37,7 +37,7 @@ class DepotRetraitController extends AbstractController
         if ($montant <= 0) {
             return $this->json(['error' => 'Veuillez entrer un montant valide supérieur à 0.'], 400);
         }
-
+        /** @var \App\Entity\Personne $user */
         $soldeActuel = $user->getJetons();
 
         // Logique de transaction

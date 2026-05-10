@@ -6,11 +6,11 @@ class QuitteOuDoubleService
 {
     public function jouer(string $typePari, int $mise): array
     {
-        // 1. Le destin : un chiffre entre 1 et 100 (50% pair, 50% impair)
+        //Le destin : un chiffre entre 1 et 100 (50% pair, 50% impair)
         $tirage = rand(1, 100);
         $gain = 0;
 
-        // 2. Calcul du gain
+        //Calcul du gain
         $isPair = ($tirage % 2 === 0);
         
         if ($typePari === 'pair' && $isPair) {

@@ -27,6 +27,7 @@ class JeubingoController extends AbstractController
         $choix = $data['choix'] ?? [];
         $mise = (int) ($data['mise'] ?? 0);
 
+        /** @var \App\Entity\Personne $user */
         if (count($choix) !== 5) return $this->json(['error' => 'Sélectionnez exactement 5 numéros'], 400);
         if ($user->getJetons() < $mise) return $this->json(['error' => 'Jetons insuffisants'], 400);
 

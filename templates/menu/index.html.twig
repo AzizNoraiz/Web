@@ -9,11 +9,9 @@
     <div class="position-absolute top-0 end-0 p-4 d-flex align-items-center gap-3" style="z-index: 1000;">
         <div class="text-end">
             <div class="text-white-50 fw-bold text-uppercase small" style="letter-spacing: 2px;">
-                {# 1. On utilise "pseudo" car c'est le nom dans ton entité Personne #}
                 {{ app.user ? app.user.pseudo : 'Membre Gold' }}
             </div>
             <div class="text-warning fw-bold fs-3" style="text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);">
-                {# 2. On affiche le VRAI solde de jetons. Le filtre number_format ajoute un espace pour faire "5 000" au lieu de "5000" #}
                 {{ app.user ? app.user.jetons|number_format(0, '', ' ') : '0' }} 
                 <small class="text-white-50" style="font-size: 0.5em;">JETONS</small>
             </div>

@@ -6,15 +6,15 @@ class Jeu777Service
 {
     public function jouer(int $mise): array
     {
-        // 1. Tirage de 3 chiffres entre 1 et 9
+        //Tirage de 3 chiffres entre 1 et 9
         $tirage = [rand(1, 9), rand(1, 9), rand(1, 9)];
         
-        // 2. Analyse du tirage (compter combien de fois chaque chiffre apparaît)
+        // Analyse du tirage (compter combien de fois chaque chiffre apparaît)
         $comptes = array_count_values($tirage);
         $maxIdentiques = max($comptes); // ex: 3 si 7-7-7, 2 si 4-4-8
         $aUnSept = in_array(7, $tirage);
 
-        // 3. Application de tes règles strictes
+        //Application de tes règles strictes
         $gain = 0;
         
         if ($maxIdentiques === 3) {

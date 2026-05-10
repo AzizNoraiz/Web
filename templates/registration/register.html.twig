@@ -24,12 +24,10 @@
                             Ouverture de Compte
                         </h2>
 
-                        {# AVANT <form action="/inscription" method="POST">#}
                         {{ form_start(registrationForm) }}
                             {# Identifiant #}
                             <div class="mb-4">
                                 <label class="form-label small text-uppercase fw-bold text-warning">Nom d'utilisateur</label>
-                                {#<input type="text" class="form-control bank-input border-warning-subtle" placeholder="Pseudo Gold">#}
                                 {{ form_widget(registrationForm.pseudo, {'attr': {'class': 'form-control bank-input border-warning-subtle', 'placeholder': 'Pseudo Gold'}}) }}
                             </div>
 
@@ -37,12 +35,10 @@
                             <div class="row">
                                 <div class="col-md-6 mb-4">
                                     <label class="form-label small text-uppercase fw-bold text-warning">Nom</label>
-                                    {#<input type="text" class="form-control bank-input border-warning-subtle" placeholder="Nom">#}
                                     {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control bank-input border-warning-subtle', 'placeholder': 'Nom'}}) }}
                                 </div>
                                 <div class="col-md-6 mb-4">
                                     <label class="form-label small text-uppercase fw-bold text-warning">Prénom</label>
-                                    {#<input type="text" class="form-control bank-input border-warning-subtle" placeholder="Prénom">#}
                                     {{ form_widget(registrationForm.prenom, {'attr': {'class': 'form-control bank-input border-warning-subtle', 'placeholder': 'Prénom'}}) }}
                                 </div>
                             </div>
@@ -51,12 +47,10 @@
                             <div class="row">
                                 <div class="col-md-7 mb-4">
                                     <label class="form-label small text-uppercase fw-bold text-warning">Adresse Mail</label>
-                                    {#<input type="email" class="form-control bank-input border-warning-subtle" placeholder="exemple@mail.com">#}
                                     {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control bank-input border-warning-subtle', 'placeholder': 'exemple@mail.com'}}) }}
                                 </div>
                                 <div class="col-md-5 mb-4">
                                     <label class="form-label small text-uppercase fw-bold text-warning">Téléphone</label>
-                                    {#<input type="tel" class="form-control bank-input border-warning-subtle" placeholder="06 ...">#}
                                     {{ form_widget(registrationForm.telephone, {'attr': {'class': 'form-control bank-input border-warning-subtle', 'placeholder': '06 ...'}}) }}
                                 </div>
                             </div>
@@ -64,7 +58,6 @@
                             {# Password #}
                             <div class="mb-5">
                                 <label class="form-label small text-uppercase fw-bold text-warning">Mot de passe</label>
-                                {#<input type="password" class="form-control bank-input border-warning-subtle" placeholder="••••••••">#}
                                 {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control bank-input border-warning-subtle', 'placeholder': '••••••••'}}) }}
                                 <div class="text-danger small mt-1 fw-bold">
                                     {{ form_errors(registrationForm.plainPassword) }}
@@ -92,7 +85,6 @@
 </div>
 
 <style>
-    /* On réutilise les styles d'inputs définis pour la banque pour garder une cohérence */
     .bank-input {
         background: #151515 !important;
         border: none !important;

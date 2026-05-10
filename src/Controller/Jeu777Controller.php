@@ -27,6 +27,7 @@ class Jeu777Controller extends AbstractController
         $mise = (int) ($data['mise'] ?? 0);
 
         //VERIFICATIONS
+        /** @var \App\Entity\Personne $user */
         if ($mise <= 0) return $this->json(['error' => 'Mise invalide'], 400);
         if ($user->getJetons() < $mise) return $this->json(['error' => 'Jetons insuffisants'], 400);
 

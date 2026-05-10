@@ -6,16 +6,16 @@ class BingoService
 {
     public function jouer(array $choixJoueur, int $mise): array
     {
-        // 1. Tirage de 5 boules parmi 10
+        //Tirage de 5 boules parmi 10
         $nombresPossibles = range(1, 10);
         shuffle($nombresPossibles);
         $tirage = array_slice($nombresPossibles, 0, 5);
 
-        // 2. Calcul des correspondances
+        //Calcul des correspondances
         $matches = array_intersect($choixJoueur, $tirage);
         $nombreDeMatches = count($matches);
 
-        // 3. Tes nouvelles règles de gain
+        //Tes nouvelles règles de gain
         $gain = 0;
         if ($nombreDeMatches === 5) {
             $gain = $mise * 100; // Jackpot absolu
